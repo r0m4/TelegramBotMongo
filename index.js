@@ -60,6 +60,9 @@
   data: 'Про компанию'
 }
 */
+
+
+
 const TelegramApi = require('node-telegram-bot-api');
 const token = '6405206204:AAGfinSAzpIlaifftIfPbqJLyayTbfPwsjc';
 const bot = new TelegramApi(token, {polling:true});
@@ -381,8 +384,7 @@ const LearningSystemAdm = {
 		]
 	})
 };
-
-TraningStartMillion  = {
+const TraningStartMillion  = {
 	reply_markup: JSON.stringify({
 		inline_keyboard: [
 			[{text : '🔥АКАДЕМИЯ ПРОДАЖ🔥', callback_data : 'Академия продаж'}],
@@ -392,7 +394,7 @@ TraningStartMillion  = {
 	})
 };
 
-TraningStartMillionAdm  = {
+const TraningStartMillionAdm  = {
 	reply_markup: JSON.stringify({
 		inline_keyboard: [
 			[{text : '🔥АКАДЕМИЯ ПРОДАЖ🔥', callback_data : 'Академия продажAdm'}],
@@ -402,7 +404,7 @@ TraningStartMillionAdm  = {
 	})
 };
 
-SalesAcademy  = {
+const SalesAcademy  = {
 	reply_markup: JSON.stringify({
 		inline_keyboard: [
 			[{text : '📱Работа с соц сетями📱', callback_data : 'Работа с соцсетями'}],
@@ -412,7 +414,7 @@ SalesAcademy  = {
 	})
 };
 
-SalesAcademyAdm  = {
+const SalesAcademyAdm  = {
 	reply_markup: JSON.stringify({
 		inline_keyboard: [
 			[{text : '📱Работа с соц сетями📱', callback_data : 'Работа с соцсетямиAdm'}],
@@ -422,7 +424,7 @@ SalesAcademyAdm  = {
 	})
 };
 
-SocialMediaWork  = {
+const SocialMediaWork  = {
 	reply_markup: JSON.stringify({
 		inline_keyboard: [
 			[{text : '⬆️Главное меню⬆️', callback_data : 'Система обученияAllowed'}],
@@ -431,7 +433,7 @@ SocialMediaWork  = {
 	})
 };
 
-SocialMediaWorkAdm  = {
+const SocialMediaWorkAdm  = {
 	reply_markup: JSON.stringify({
 		inline_keyboard: [
 			[{text : '⬆️Главное меню⬆️', callback_data : 'Система обученияAllowedAdm'}],
@@ -440,10 +442,30 @@ SocialMediaWorkAdm  = {
 	})
 };
 
-
-
-
-
+const { MongoClient, ServerApiVersion } = require('mongodb');
+const uri = "mongodb+srv://RomanR0m4:op29ndgF@cluster0.guew5xg.mongodb.net/?retryWrites=true&w=majority";
+// Create a MongoClient with a MongoClientOptions object to set the Stable API version
+const client = new MongoClient(uri, {
+  serverApi: {
+    version: ServerApiVersion.v1,
+    strict: true,
+    deprecationErrors: true,
+  }
+});
+async function run() {
+  try {
+    // Connect the client to the server	(optional starting in v4.7)
+    await client.connect();
+    // Send a ping to confirm a successful connection
+    //await (client.db('UKGLearningBot').collection('Users').updateOne({id: '338176795'}, {$set: 'Users.TG_IDs'}, {upsert:true}))
+    await client.db("admin").command({ ping: 1 });
+    console.log("Pinged your deployment. You successfully connected to MongoDB!");
+  } finally {
+    // Ensures that the client will close when you finish/error
+    await client.close();
+  }
+}
+run().catch(console.dir);
 
 
 
@@ -453,12 +475,80 @@ const start = () => {
 		{command: '/start', description: 'Приветствую Ваc!'},
 		{command: '/link', description: 'Персональная Ссылка'},
 		{command: '/language', description: 'Choose your language'},
-		{command: '/fff', description: 'AdminPanel'}
+		{command: '/fff', description: 'AdminPanel'},
+		{command: '/user', description: 'user'}
 
 ])
 
+		const dbUsers = client.db('UKGLearningBot').collection('Users');
+		
+		async function writeUser(data, mentor){
+			
+			try {
+				
+				const filter = {TG_ID: data.id};				
+				let now = new Date();
+
+				await client.connect();
+				await dbUsers.updateOne(filter, {$set: {"UserName": data.username, "Name": data.first_name, "Surname": data.last_name, "Mentor": mentor, "RegDate":now} }, {upsert: false})
+				
+								
+			
+			} finally {
+			
+				await client.close();
+			
+			}
+		}
+
+		async function fetchUser(data){
+			
+			try {
+				
+				const filter = {TG_ID: data.id};								
+				
+				await client.connect();				
+
+				return await dbUsers.findOne(filter, function(err, result){
+					if(err) throw err;
+					console.log(result);
+				});;
+			
+			} finally {
+			
+				await client.close();
+			
+			}
+		}
+
+		async function fetchMentor(data, mentor){
+			
+			try {
+
+				const filter = {Mentor: mentor};								
+				
+				await client.connect();				
+				
+				return await dbUsers.findOne(filter, function(err, result){
+					
+					if(err) throw err;
+					console.log(result);
+
+				});;
+			
+			} finally {
+			
+				await client.close();
+			
+			}
+		}
+
+		
+
+	
 	bot.on('message', async msg => {
-		//console.log(msg)
+		
+	try{		
 		
 		let Reg = /\s/;
 		let botName = 'https://t.me/adlfjbaf_bot';
@@ -466,16 +556,17 @@ const start = () => {
 		const text = msg.text;
 		const chatId = msg.chat.id;	
 
-		//console.log("Hi", Reg.test(msg.text))
-		
+				
 		if (msg.chat.id == '338176795jhfjfs') {
 			admin = true;
 		}
 		
 		if (Reg.test(msg.text) && admin == false){
 			
-			let arr = msg.text.split(" ");
-			global.mentor = arr[1];
+			let mentor = msg.text.split(" ");
+			writeUser(msg.chat, mentor[1]);
+			
+			global.mentor = mentor[1];
 
 			await bot.sendMessage(chatId, `Поздравляем! 🎉 
 
@@ -541,11 +632,23 @@ const start = () => {
 			to change the language press: menu button -> /language`, AdminButtons)
 		}
 
+		if(text == "/user"){
+			let UserData = await fetchUser(msg.chat)
+			let MentorData = await fetchMentor(msg.chat, UserData.Mentor)			
+			console.log("Ментор", JSON.stringify(MentorData))
+			bot.sendMessage(chatId,	`Ваш наставник : ${JSON.stringify(MentorData.UserName)}`
+				);	
+		}
 		
+
+	} catch (error){ return error}	
+
 })
 
 	bot.on('callback_query', async msg => {
-		
+
+		try{
+
 		chatId = msg.message.chat.id;
 
 		if (msg.data =="Про компанию" ){
@@ -791,7 +894,7 @@ const start = () => {
 		}
 
 		if(msg.data == "Личный кабинет"){
-			console.log(global.mentor)
+			console.log("globall mentor is : ", global.mentor)
 			await bot.sendMessage(chatId, `Добро пожаловать в персональный кабинет бота. 
 
 				Вас пригласил: ${global.mentor}
@@ -1035,8 +1138,8 @@ const start = () => {
 				ГЛАВНОЕ - Научись пользоваться системой!
 
 				Ссылка на видео - https://youtu.be/2yxdprLS2zg`, SocialMediaWorkAdm)
-		}
-
+			}
+		} catch (error){return error;}
 	})
 
 }

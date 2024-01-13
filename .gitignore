@@ -1,3 +1,4 @@
-./BotKey
-./BotKeyPub
-./node_modules
+BotKey
+BotKeyPub
+node_modules
+node_modules/
