@@ -5,15 +5,21 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon index.js",
-    "start": "node index.js"
+    "start": "node index.js",
+    "devInter": "nodemon indexIntermedia.js",
+    "devLearning": "nodemon indexLearning.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "fs": "^0.0.1-security",
+    "json2csv": "^6.0.0-alpha.2",
     "mongodb": "^6.3.0",
     "node-telegram-bot-api": "^0.64.0",
     "nodemon": "^3.0.2",
+    "papaparse": "^5.4.1",
+    "path": "^0.12.7",
     "pg": "^8.11.3",
     "pg-hstore": "^2.3.4",
     "sequelize": "^6.35.2"

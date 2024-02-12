@@ -1,71 +1,14 @@
-/*{
-  message_id: 5,
-  from: {
-    id: 338176795,
-    is_bot: false,
-    first_name: 'Roman',
-    last_name: 'Zhylinskyi',
-    username: 'R0m44',
-    language_code: 'en'
-  },
-  chat: {
-    id: 338176795,
-    first_name: 'Roman',
-    last_name: 'Zhylinskyi',
-    username: 'R0m44',
-    type: 'private'
-  },
-  date: 1703943066,
-  text: 'dfsf'
-}
---------------------------------------------------------
-{
-  id: '1452458276275829430',
-  from: {
-    id: 338176795,
-    is_bot: false,
-    first_name: 'Roman',
-    last_name: 'Zhylinskyi',
-    username: 'R0m44',
-    language_code: 'en'
-  },
-  message: {
-    message_id: 84,
-    from: {
-      id: 6405206204,
-      is_bot: true,
-      first_name: 'TestForTest',
-      username: 'adlfjbaf_bot'
-    },
-    chat: {
-      id: 338176795,
-      first_name: 'Roman',
-      last_name: 'Zhylinskyi',
-      username: 'R0m44',
-      type: 'private'
-    },
-    date: 1703960681,
-    text: 'Поздравляем 🎉\n' +
-      '\n' +
-      '   Вы оказались в лучшем месте, чтобы начать зарабатывать через интернет от 10.000$ / мес на экологичном продукте с командой профессионалов\n' +
-      '\n' +
-      '   ✅ Жмите последовательно на кнопки в главном меню и уже через 15 минут у Вас сложится понимание \n' +
-      '   - как достичь Ваших финансовых целей вместе с нами в 2024 году.\n' +
-      '\n' +
-      '   to change the language press: menu button -> /language',
-    entities: [ [Object] ],
-    reply_markup: { inline_keyboard: [Array] }
-  },
-  chat_instance: '-7994465932844036888',
-  data: 'Про компанию'
-}
-*/
-
-
-
 const TelegramApi = require('node-telegram-bot-api');
 const token = '6405206204:AAGfinSAzpIlaifftIfPbqJLyayTbfPwsjc';
 const bot = new TelegramApi(token, {polling:true});
+const Json2CsvParser = require("json2csv").Parser;
+const fs = require("fs");
+const path = require("path");
+let admin = false;
+let adminName = '338176795';
+let User={};
+let User2={};
+User.systemLearn = 'Система обучения';
 
 const MainButtons = {
 	reply_markup: JSON.stringify({
@@ -80,7 +23,27 @@ const MainButtons = {
 			[{text : '🧭Наши соцсети🧭', callback_data : 'Наши соцсети'}],
 			[{text : '📱Связь с наставником📱', callback_data : 'Связь с наставником'}],
 			[{text : '💡Система обучения💡', callback_data : 'Система обучения'}],
-			[{text : '💼Личный  кабинет💼', callback_data : 'Личный кабинет'}]
+			[{text : '💼Личный кабинет💼', callback_data : 'Личный кабинет'}]
+			
+			]
+		
+	})
+};
+
+const MainButtonsProceed = {
+	reply_markup: JSON.stringify({
+		inline_keyboard:  [
+
+			[{text : '✨Про компанию✨', callback_data : 'Про компанию'}],
+			[{text : '💎Про команду💎', callback_data : 'Про команду'}],
+			[{text : '🏆Пассивный доход в компании🏆', callback_data : 'Пассивный доход'}],
+			[{text : '❤️Маркетинг план❤️', callback_data : 'Маркетинг план'}],
+			[{text : '🗣Отзывы партнеров🗣', callback_data : 'Отзывы партнеров'}],
+			[{text : '🚀Возможности системы автоматизации🚀', callback_data : 'Возможности системы'}],
+			[{text : '🧭Наши соцсети🧭', callback_data : 'Наши соцсети'}],
+			[{text : '📱Связь с наставником📱', callback_data : 'Связь с наставником'}],
+			[{text : '💡Система обучения💡', callback_data : 'Система обученияAllowed'}],
+			[{text : '💼Личный кабинет💼', callback_data : 'Личный кабинет'}]
 			
 			]
 		
@@ -99,7 +62,7 @@ const AdminButtons = {
 			[{text : '🚀Возможности системы автоматизации🚀', callback_data : 'Возможности системыAdm'}],
 			[{text : '🧭Наши соцсети🧭', callback_data : 'Наши соцсетиAdm'}],
 			[{text : '📱Связь с наставником📱', callback_data : 'Связь с наставникомAdm'}],
-			[{text : '💡Система обучения💡', callback_data : 'Система обученияAdm'}],
+			[{text : '💡Система обучения💡', callback_data : 'Система обученияAllowedAdm'}],
 			[{text : '💼Личный  кабинет💼', callback_data : 'Личный кабинетAdm'}],
 			[{text : '🚓Администрирование🚔', callback_data : 'Администрирование'}]
 			
@@ -239,6 +202,16 @@ const AboutSocialAdm = {
 	})
 };
 
+const MentorContact = {
+	reply_markup: JSON.stringify({
+		inline_keyboard: [	
+			
+			[{text : '📱Связь с наставником📱', url:'tg://user?id=@R0m44'}]
+			
+		]
+	})
+};
+
 const AboutMentor = {
 	reply_markup: JSON.stringify({
 		inline_keyboard: [
@@ -278,6 +251,25 @@ const MakePhoto = {
 		inline_keyboard: [
 			[{text : '📋Сделать фото📋', callback_data : 'Сделать фото'}],
 			[{text : '📋Главное меню📋', callback_data : 'Главное меню'}]
+		]
+	})
+};
+
+const AreYouShure = {
+	reply_markup: JSON.stringify({
+		inline_keyboard: [
+			[{text : '📋Отправить📋', callback_data : 'ОтправитьСкрин'}],
+			[{text : '📋Отменить📋', callback_data : 'ОтменитьСкрин'}],
+			[{text : '📋Главное меню📋', callback_data : 'Главное меню'}]
+		]
+	})
+};
+const AreYouShureAdm = {
+	reply_markup: JSON.stringify({
+		inline_keyboard: [
+			[{text : '📋Отправить📋', callback_data : 'ОтправитьСкрин'}],
+			[{text : '📋Отменить📋', callback_data : 'ОтменитьСкрин'}],
+			[{text : '📋Главное меню📋', callback_data : 'Главное менюAdm'}]
 		]
 	})
 };
@@ -325,7 +317,7 @@ const SendingMessages  = {
 	reply_markup: JSON.stringify({
 		inline_keyboard: [
 			[{text : 'Начать рассылку', callback_data : 'Начать рассылку'}],
-			[{text : 'Отменить', callback_data : 'Отменить'}],
+			[{text : 'Отменить', callback_data : 'Администрирование'}],
 			[{text : 'Назад', callback_data : 'Администрирование'}]
 		]
 	})
@@ -342,7 +334,8 @@ const ClientSendProofPhoto = {
 const Confirm = {
 	reply_markup: JSON.stringify({
 		inline_keyboard: [
-			[{text : 'Подтвердить', callback_data : 'Подтвердить'}]			
+			[{text : 'Подтвердить', callback_data : 'Подтвердить'}],
+			[{text : '📋Главное меню📋', callback_data : 'Главное меню'}]			
 		]
 	})
 };
@@ -350,7 +343,17 @@ const Confirm = {
 const ConfirmAdm = {
 	reply_markup: JSON.stringify({
 		inline_keyboard: [
-			[{text : 'Подтвердить', callback_data : 'Система обученияAllowedAdm'}]			
+			[{text : 'Подтвердить', callback_data : 'Система обученияAllowedAdm'}],
+			[{text : '📋Главное меню📋', callback_data : 'Главное менюAdm'}]			
+		]
+	})
+};
+
+const ConfirmPhotoAprove = {
+	reply_markup: JSON.stringify({
+		inline_keyboard: [
+			[{text : 'Подтвердить', callback_data : 'ПодтвердитьPhotoAprove'}],
+			[{text : 'Отменить', callback_data : 'ОтменитьPhotoAprove'}]			
 		]
 	})
 };
@@ -446,13 +449,17 @@ const { MongoClient, ServerApiVersion } = require('mongodb');
 const uri = "mongodb+srv://RomanR0m4:op29ndgF@cluster0.guew5xg.mongodb.net/?retryWrites=true&w=majority";
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
+
   serverApi: {
     version: ServerApiVersion.v1,
     strict: true,
     deprecationErrors: true,
   }
+
 });
+
 async function run() {
+
   try {
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
@@ -460,82 +467,98 @@ async function run() {
     //await (client.db('UKGLearningBot').collection('Users').updateOne({id: '338176795'}, {$set: 'Users.TG_IDs'}, {upsert:true}))
     await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
+
   } finally {
+  	
     // Ensures that the client will close when you finish/error
     await client.close();
   }
+
 }
-run().catch(console.dir);
+//run().catch(console.dir);
 
 
 
 const start = () => {
 	
 	bot.setMyCommands([
+
 		{command: '/start', description: 'Приветствую Ваc!'},
 		{command: '/link', description: 'Персональная Ссылка'},
 		{command: '/language', description: 'Choose your language'},
-		{command: '/fff', description: 'AdminPanel'},
-		{command: '/user', description: 'user'}
+		{command: '/fff', description: 'AdminPanel'}
 
-])
+	])
 
 		const dbUsers = client.db('UKGLearningBot').collection('Users');
+		//let mentorI;		
+
 		
-		async function writeUser(data, mentor){
+		
+		async function writeGetUser(data, mentor){
 			
 			try {
-				
-				const filter = {TG_ID: data.id};				
-				let now = new Date();
+
+				//console.debug("data Debug", data);
+				//console.log("mentor inside writeGetUser", mentor);
+				let User = {};
 
 				await client.connect();
-				await dbUsers.updateOne(filter, {$set: {"UserName": data.username, "Name": data.first_name, "Surname": data.last_name, "Mentor": mentor, "RegDate":now} }, {upsert: false})
 				
-								
-			
-			} finally {
-			
-				await client.close();
-			
-			}
-		}
-
-		async function fetchUser(data){
-			
-			try {
+				const filter = {TG_ID: data.id};
+				const mentorOne = {TG_ID: Number(mentor)};			
+				let now = new Date();
+				now.setUTCHours(now.getUTCHours() + 2);
+				//const formattedDate = formatDate(now);
 				
-				const filter = {TG_ID: data.id};								
+				await dbUsers.updateOne(filter,
+
+					{$set: {"UserName": data.username, "Name": data.first_name, "Surname": data.last_name}, $setOnInsert: {"Mentor": mentor, "RegDate": now}}, 
+					{upsert:true}
+
+				)				
 				
-				await client.connect();				
-
-				return await dbUsers.findOne(filter, function(err, result){
-					if(err) throw err;
-					console.log(result);
-				});;
-			
-			} finally {
-			
-				await client.close();
-			
-			}
-		}
-
-		async function fetchMentor(data, mentor){
-			
-			try {
-
-				const filter = {Mentor: mentor};								
+				let get_user = await dbUsers.findOne(filter); 
+				let get_mentor = await dbUsers.findOne(mentorOne);
+				//console.log("getMent", get_mentor);
+				mentor_data = {TG_ID: get_mentor.TG_ID}
+				//console.log('trying get_user.MentorName',get_user.MentorName == true);
 				
-				await client.connect();				
-				
-				return await dbUsers.findOne(filter, function(err, result){
-					
-					if(err) throw err;
-					console.log(result);
+				if (!get_user.MentorName){
 
-				});;
-			
+					await dbUsers.updateOne(filter, { 
+
+			    	$set: { "MentorName": get_mentor.UserName }
+			  
+			  	}, { upsert: true })
+
+
+				}			
+
+				get_user = await dbUsers.findOne(filter); 			
+
+				if (get_user.UserName != get_mentor.UserName ){
+
+					//console.log("Mentor data fired", get_mentor);
+				  const followersCount = isNaN(get_mentor.Followers) ? 1 : get_mentor.Followers + 1;
+
+				  await dbUsers.updateOne(mentor_data, {
+
+				  	$set: {"Followers": followersCount}
+				  
+				  })
+
+				}
+				
+				User = get_user;
+				//console.log("User inside writeGetUser", User)
+
+				//User.Mentor = get_mentor.UserName;
+				
+				//console.log("USer inside WriteGet", User)
+				
+				return User;
+				
 			} finally {
 			
 				await client.close();
@@ -545,83 +568,328 @@ const start = () => {
 
 		
 
-	
+		async function writeUserPass(data){
+			
+			try {
+
+				//console.debug("data Debug WriteUserPass", data);
+				
+				
+				await client.connect();
+				
+				const filter = {TG_ID: data.id};
+					
+				let get_user = await dbUsers.findOne(filter);
+				const mentorFilter = {TG_ID: Number(get_user.Mentor)}; 	
+				let get_mentor = await dbUsers.findOne(mentorFilter);	
+				//console.log('mentorFilter inside writeUserPass', mentorFilter);
+
+				const result = await dbUsers.updateOne(
+
+				  filter,
+				    { $set: { "UserPass": "Passed" } },
+				  		{ upsert: true }
+				);
+
+				const followerRegisteredCount = isNaN(get_mentor.FollowerRegistered) ? 1 : get_mentor.FollowerRegistered + 1;				
+
+				//console.log("Before mentorUpdate: get_mentor", get_mentor);
+				const mentorUpdate = await dbUsers.updateOne(
+
+					mentorFilter,
+						{$set: { "FollowerRegistered": followerRegisteredCount }},
+							{ upsert: true}
+
+				)				
+
+				//console.log('mentorUpdate modyfier count', mentorUpdate.modifiedCount);
+				//console.log("mentorUpdate upserted ID", mentorUpdate.upsertedId);
+				//console.log("result writeUserPass ", result);
+				
+			} finally {
+			
+				await client.close();
+			
+			}
+		}
+
+		async function getUser(data){
+
+			try {
+
+				await client.connect();				
+
+				const filter = {TG_ID: data.id}
+				let get = await dbUsers.findOne(filter)
+				
+				console.log("get User inside ", get)
+
+				 // Текущая дата и время
+				const currentDateTime = new Date();
+
+				// Начальная дата (текущая дата и время)
+				const endDate = new Date(currentDateTime);
+				//console.log("start date", endDate);
+				// Конечная дата (startDate - 1 месяц)
+				const startDate = new Date(endDate);
+				startDate.setMonth(endDate.getMonth() - 1);
+				//console.log("endDate ", startDate)
+
+				// Формируем запрос для выборки данных за определенный период и по полю MentorName
+				const query = {
+				  RegDate: {
+				    $gte: startDate, // Больше или равно начальной дате
+				    $lt: endDate     // Меньше конечной даты
+				  },
+				  MentorName: get.UserName // Укажите имя наставника, по которому хотите фильтровать
+				};
+
+				// Выполняем запрос к базе данных
+				const result = await dbUsers.find(query).toArray();
+
+				// В переменной result теперь содержатся записи, удовлетворяющие условиям времени и имени наставника
+				//console.log("result", result.length);
+				User2.MonthlyFollowers = result.length;
+
+				return get;
+
+			} finally {
+
+				await client.close();
+
+			}
+		}
+
+
+		async function csvFile() {
+
+		  try {
+
+		    await client.connect();
+
+		    const csvFields = ['TG_ID', 'UserName', 'Name', 'Surname', 'MentorName', 'RegDate'];
+
+		    const userData = await dbUsers.find({}).toArray();
+
+		    const formattedUserData = userData.map(user => {
+
+		      const formattedUser = {};
+
+		      csvFields.forEach(field => {
+
+		        formattedUser[field] = user[field];
+
+		      });
+
+		      return formattedUser;
+
+		    });
+
+		    const json2csvParser = new Json2CsvParser({
+
+		      csvFields
+
+		    });
+
+		    const csvData = json2csvParser.parse(formattedUserData);
+
+		    fs.writeFile('./Statistic.csv', csvData, function (err) {
+
+		      if (err) throw err;
+
+		      //console.log('Wrote to Statistic.csv successfully!');
+
+		    });
+
+		    //console.log('File downloaded successfully');
+
+		  } finally {
+
+		    await client.close();
+		  }
+		}
+
+		async function statisticsOverall() {
+		  try {
+		    await client.connect();
+
+		    // Текущая дата и время
+		    const currentDateTime = new Date();
+
+		    // Записи за месяц
+		    const startDateMonth = new Date(currentDateTime);
+		    startDateMonth.setMonth(currentDateTime.getMonth() - 1);
+
+		    // Записи за 7 дней
+		    const startDate7Days = new Date(currentDateTime);
+		    startDate7Days.setDate(currentDateTime.getDate() - 7);
+
+		    // Записи за 24 часа
+		    const startDate24Hours = new Date(currentDateTime);
+		    startDate24Hours.setHours(currentDateTime.getHours() - 24);
+
+		    // Записи за все времена
+		    const queryAllTime = {};
+
+		    const queries = [
+		      {
+		        period: 'месяц',
+		        query: {
+		          RegDate: {
+		            $gte: startDateMonth,
+		            $lt: currentDateTime
+		          }
+		        }
+		      },
+		      {
+		        period: '7 дней',
+		        query: {
+		          RegDate: {
+		            $gte: startDate7Days,
+		            $lt: currentDateTime
+		          }
+		        }
+		      },
+		      {
+		        period: '24 часа',
+		        query: {
+		          RegDate: {
+		            $gte: startDate24Hours,
+		            $lt: currentDateTime
+		          }
+		        }
+		      },
+		      {
+		        period: 'все времена',
+		        query: queryAllTime
+		      }
+		    ];
+
+		    const resultObject = {};
+
+		    for (const { period, query } of queries) {
+		      const result = await dbUsers.find(query).toArray();
+
+		      //console.log(`Результат за ${period}:`, result.length);
+
+		      resultObject[period] = result.length;
+		    }
+
+		    return resultObject;
+		  } finally {
+		    await client.close();
+		  }
+		}
+
+
+
+		
 	bot.on('message', async msg => {
 		
-	try{		
+	try {		
 		
 		let Reg = /\s/;
-		let botName = 'https://t.me/adlfjbaf_bot';
-		let admin = false;
+		mentor = msg.text.split(" ");
+		//console.log(msg.text)
+		//console.log("Mentor bot.on", mentor)		
+		let botName = 'https://t.me/adlfjbaf_bot';		
 		const text = msg.text;
 		const chatId = msg.chat.id;	
 
+		if (mentor.length == 2){
+
+			User = await writeGetUser(msg.chat, mentor[1]).catch(console.dir);
+		
+		} else User = await getUser(msg.chat).catch(console.dir);
 				
-		if (msg.chat.id == '338176795jhfjfs') {
+		if (msg.chat.id == adminName) {
+
 			admin = true;
+		
 		}
 		
-		if (Reg.test(msg.text) && admin == false){
-			
-			let mentor = msg.text.split(" ");
-			writeUser(msg.chat, mentor[1]);
-			
-			global.mentor = mentor[1];
+		//Start via link nonAdmin
+		if (Reg.test(msg.text) && admin == false){	
 
-			await bot.sendMessage(chatId, `Поздравляем! 🎉 
+			User.sendCombmessage = false;			
+			//User = await writeGetUser(msg.chat, mentor[1]).catch(console.dir);
+			//mentorI = mentor[1];
 
-			Вы оказались в лучшем месте, чтобы начать зарабатывать через интернет от 10.000$ / мес на экологичном продукте с командой профессионалов.
+			if (User.UserPass){User.systemLearn = 'Система обученияAllowed'} else User.systemLearn = 'Система обучения';
 
-			✅ Жмите последовательно на кнопки в главном меню и уже через 15 минут у вас сложится понимание - как достичь ваших финансовых целей вместе с нами в 2023-2024 годах.`, MainButtons)
+			let switcher;
+
+			if (User.systemLearn == 'Система обучения'){switcher = MainButtons} else switcher = MainButtonsProceed;			
+
+			await bot.sendMessage(chatId, `<b>Поздравляем! 🎉\n\nВы оказались в лучшем месте, чтобы начать зарабатывать через интернет от 10.000$ / мес на экологичном продукте с командой профессионалов.\n\n✅ Жмите последовательно на кнопки в главном меню и уже через 15 минут у вас сложится понимание - как достичь ваших финансовых целей вместе с нами в 2024 году.\n\nto change language press: menu button -> /language</b>`, 
+				{parse_mode: "HTML", reply_markup: switcher.reply_markup})
 		
-		} else if(Reg.test(msg.text) && admin == true) {
+		//Star via link Admin
+		} else if (Reg.test(msg.text) && admin == true) {
 			
-			let arr = msg.text.split(" ");
-			global.mentor = arr[1];
+			User.sendCombmessage = false;			
+			//User = await writeGetUser(msg.chat, mentor[1]).catch(console.dir);							
 
-			await bot.sendMessage(chatId, `Поздравляем! 🎉 
+			await bot.sendMessage(chatId, `<b>Поздравляем! 🎉\n\nВы оказались в лучшем месте, чтобы начать зарабатывать через интернет от 10.000$ / мес на экологичном продукте с командой профессионалов.\n\n✅ Жмите последовательно на кнопки в главном меню и уже через 15 минут у вас сложится понимание - как достичь ваших финансовых целей вместе с нами в 2024 году.\n\nto change language press: menu button -> /language</b>`, 
+				{parse_mode: "HTML", reply_markup: AdminButtons.reply_markup})
 
-			Вы оказались в лучшем месте, чтобы начать зарабатывать через интернет от 10.000$ / мес на экологичном продукте с командой профессионалов.
-
-			✅ Жмите последовательно на кнопки в главном меню и уже через 15 минут у вас сложится понимание - как достичь ваших финансовых целей вместе с нами в 2023-2024 годах.`, AdminButtons)
-
+		// /Start non Admin
 		} else if (text == '/start' && admin == false) {
-			
-			await bot.sendMessage(chatId, `Поздравляем! 🎉 
 
-			Вы оказались в лучшем месте, чтобы начать зарабатывать через интернет от 10.000$ / мес на экологичном продукте с командой профессионалов.
+			//console.log("start 1")
+			//console.log("User sendCombMess non Addm", User.sendCombmessage)
+			User.sendCombmessage = false;
+			//console.log("start 2")
+			//User = await getUser(msg.chat).catch(console.dir);
+			//console.log("start 3")
+			//console.log("User /start admin false", User);
 
-			✅ Жмите последовательно на кнопки в главном меню и уже через 15 минут у вас сложится понимание - как достичь ваших финансовых целей вместе с нами в 2023-2024 годах.`, MainButtons)
+			if (User.UserPass){User.systemLearn = 'Система обученияAllowed'} else User.systemLearn = 'Система обучения';
+
+			//console.log("start 4")		
+			let switcher;
+
+			if (User.systemLearn == 'Система обучения'){switcher = MainButtons} else switcher = MainButtonsProceed;
+
+			//console.log("start 5")
+			await bot.sendMessage(chatId, `<b>Поздравляем! 🎉\n\nВы оказались в лучшем месте, чтобы начать зарабатывать через интернет от 10.000$ / мес на экологичном продукте с	командой профессионалов.\n\n✅ Жмите последовательно на кнопки в главном меню и уже через 15 минут у вас сложится понимание - как достичь ваших финансовых целей вместе с нами в 2024 году.\n\nTo change language press: menu button -> /language</b>`, 
+				{parse_mode: "HTML", reply_markup: switcher.reply_markup})
 		
+	  // /Start Admin
 	  } else if (text == '/start' && admin == true) {
+
+	  	//console.log("start 1")
+	  	//console.log("User sendCombMess Addm", User.sendCombmessage)
+	  	User.sendCombmessage = false;
+	  	//console.log("start 2")
+	  	//User = await getUser(msg.chat).catch(console.dir);
+	  	//console.log("start 3")
+			//console.log("User start adm true", User);
 			
-			await bot.sendMessage(chatId, `Поздравляем 🎉
-
-			Вы оказались в лучшем месте, чтобы начать зарабатывать через интернет от 10.000$ / мес на экологичном продукте с командой профессионалов
-
-			✅ Жмите последовательно на кнопки в главном меню и уже через 15 минут у Вас сложится понимание 
-			- как достичь Ваших финансовых целей вместе с нами в 2024 году.
-
-			to change the language press: menu button -> /language`, AdminButtons)
+			await bot.sendMessage(chatId, `<b>Поздравляем 🎉\n\nВы оказались в лучшем месте, чтобы начать зарабатывать через интернет от 10.000$ / мес на экологичном продукте с командой профессионалов\n\n✅ Жмите последовательно на кнопки в главном меню и уже через 15 минут у Вас сложится понимание\n\n- как достичь Ваших финансовых целей вместе с нами в 2024 году.\n\nto change language press: menu button -> /language</b>`, {parse_mode: "HTML", reply_markup: AdminButtons.reply_markup})
 		
 		}
 	  
 		if (text == '/link' && admin == false) {
+
 			await bot.sendMessage(chatId, `Чтобы подробнее узнать о UKG Holding - переходи по ссылке ниже 👇 
 
 					🔗 ${botName}?start=${chatId}`, AboutMentor )
 		
 		} else if (text == '/link' && admin == true) {
+
 			await bot.sendMessage(chatId, `Чтобы подробнее узнать о UKG Holding - переходи по ссылке ниже 👇 
 
 					🔗 ${botName}?start=${chatId}`, AboutMentorAdm )
 		}
 
 		if (text == '/language'){
+
 			await bot.sendMessage(chatId, `Please choose your Language 🌍 :`, LanguageButtons	)
 		}
 
 		if (text == '/fff') {
+
 			await bot.sendMessage(chatId, `Поздравляем 🎉
 
 			Вы оказались в лучшем месте, чтобы начать зарабатывать через интернет от 10.000$ / мес на экологичном продукте с командой профессионалов
@@ -630,16 +898,7 @@ const start = () => {
 			- как достичь Ваших финансовых целей вместе с нами в 2024 году.
 
 			to change the language press: menu button -> /language`, AdminButtons)
-		}
-
-		if(text == "/user"){
-			let UserData = await fetchUser(msg.chat)
-			let MentorData = await fetchMentor(msg.chat, UserData.Mentor)			
-			console.log("Ментор", JSON.stringify(MentorData))
-			bot.sendMessage(chatId,	`Ваш наставник : ${JSON.stringify(MentorData.UserName)}`
-				);	
-		}
-		
+		}		
 
 	} catch (error){ return error}	
 
@@ -647,9 +906,9 @@ const start = () => {
 
 	bot.on('callback_query', async msg => {
 
-		try{
-
-		chatId = msg.message.chat.id;
+		try {
+		//console.log("srabotal calback", MainButtons)
+		chatId = msg.message.chat.id;		
 
 		if (msg.data =="Про компанию" ){
 			
@@ -666,6 +925,7 @@ const start = () => {
 		}
 
 		if (msg.data == "Про команду"){
+
 			await bot.sendMessage(chatId, `☝️ Чтобы Вам заработать в любой компании, сначала нужно узнать - какая команда за ней стоит?
 				Из видео вы поймете кто мы и чем занимаемся.
 				Люди с заработком сотни тысяч  долларов занялись приняли предложение компании UKG Holding.
@@ -681,6 +941,7 @@ const start = () => {
 		}
 
 		if (msg.data == "Про командуAdm"){
+
 			await bot.sendMessage(chatId, `☝️ Чтобы Вам заработать в любой компании, сначала нужно узнать - какая команда за ней стоит?
 				Из видео вы поймете кто мы и чем занимаемся.
 				Люди с заработком сотни тысяч  долларов занялись приняли предложение компании UKG Holding.
@@ -696,6 +957,7 @@ const start = () => {
 		}
 
 		if (msg.data  == "Пассивный доход"){
+
 			await bot.sendMessage(chatId,`🏆 Почему UKG Holding и сколько может зарабатывать инвестор абсолютно пассивно?
 
 				Уникальное сочетание золота и криптовалюты
@@ -708,6 +970,7 @@ const start = () => {
 		}
 
 		if (msg.data  == "Пассивный доходAdm"){
+
 			await bot.sendMessage(chatId,`🏆 Почему UKG Holding и сколько может зарабатывать инвестор абсолютно пассивно?
 
 				Уникальное сочетание золота и криптовалюты
@@ -719,7 +982,8 @@ const start = () => {
 				https://www.youtube.com/watch?v=XtkgCadNZBg`, AboutPassiveProfitAdm)
 		}
 
-		if(msg.data == "Маркетинг план"){
+		if (msg.data == "Маркетинг план"){
+
 			await bot.sendMessage(chatId, `Маркетинг план компании UKG Holding
 
 
@@ -746,6 +1010,7 @@ const start = () => {
 		}
 
 		if (msg.data == "Маркетинг планAdm"){
+
 			await bot.sendMessage(chatId, `Маркетинг план компании UKG Holding
 
 
@@ -772,6 +1037,7 @@ const start = () => {
 		}
 
 		if (msg.data == "Отзывы партнеров"){
+
 			await bot.sendMessage(chatId, `https://www.youtube.com/watch?v=wCSbkEIeQb0
 				https://www.youtube.com/watch?v=9CAufUoAL_s
 				https://www.youtube.com/watch?v=Gm1_-1ffGTg
@@ -779,6 +1045,7 @@ const start = () => {
 		}
 
 		if (msg.data == "Отзывы партнеровAdm"){
+
 			await bot.sendMessage(chatId, `https://www.youtube.com/watch?v=wCSbkEIeQb0
 				https://www.youtube.com/watch?v=9CAufUoAL_s
 				https://www.youtube.com/watch?v=Gm1_-1ffGTg
@@ -786,6 +1053,7 @@ const start = () => {
 		}
 
 		if (msg.data == "Возможности системы"){
+
 			await bot.sendMessage(chatId, `❤️ Как команда поможет вам в заработке денег, выполнив 95% работы за вас?
 				Наша главная ценность - создание условий для заработка партнерам.
 				Что нужно человеку при обычном раскладе, чтобы зарабатывать в МЛМ?
@@ -809,6 +1077,7 @@ const start = () => {
 		}
 
 		if (msg.data == "Возможности системыAdm"){
+
 			await bot.sendMessage(chatId, `❤️ Как команда поможет вам в заработке денег, выполнив 95% работы за вас?
 				Наша главная ценность - создание условий для заработка партнерам.
 				Что нужно человеку при обычном раскладе, чтобы зарабатывать в МЛМ?
@@ -832,6 +1101,7 @@ const start = () => {
 		}
 
 		if (msg.data == "Наши соцсети"){
+
 			await bot.sendMessage(chatId, `.
 				➡️Сайт UKGHolding.net  (https://ukgholding.net/)
 				➡️YOUTUBE  (https://www.youtube.com/@ukgholding)
@@ -842,7 +1112,8 @@ const start = () => {
 				➡️Обменник Купить/продать CGT токен (https://t.me/mtxchgbot)`, AboutMentor)
 		}
 
-		if(msg.data == "Наши соцсетиAdm"){
+		if (msg.data == "Наши соцсетиAdm"){
+
 			await bot.sendMessage(chatId, `.
 				➡️Сайт UKGHolding.net  (https://ukgholding.net/)
 				➡️YOUTUBE  (https://www.youtube.com/@ukgholding)
@@ -853,16 +1124,39 @@ const start = () => {
 				➡️Обменник Купить/продать CGT токен (https://t.me/mtxchgbot)`, AboutMentorAdm)
 		}
 
-		if(msg.data == "Связь с наставником"){
-			await bot.sendMessage(chatId, `@${msg.from.username}`)
+		if (msg.data == "Связь с наставником"){
+
+			await bot.sendMessage(chatId, `<b>Внимание если наставник не записан у Вас в телефонной книге 
+				или у него стоит запрет в настройках конфиденциальности,связь с настваником не предоставится @${User.MentorName}👇</b>`,{parse_mode: "HTML",
+				reply_markup: JSON.stringify({
+					inline_keyboard: [
+						[{text : '📞Связь📞', url : `t.me/@${User.MentorName}`}],
+						[{text : '📋Главное меню📋', callback_data : 'Главное меню'}]			
+					]
+				})
+			})
 		}
 
-		if(msg.data == "Связь с наставникомAdm"){
-			await bot.sendMessage(chatId, `@${msg.from.username}`)
+		if (msg.data == "Связь с наставникомAdm"){
+
+			await bot.sendMessage(chatId, `Внимание если наставник не записан у Вас в 
+				телефонной книге или у него стоит запрет в настройках конфиденциальности, 
+				связь с настваником не предоставится 
+				@${User.MentorName}👇`, {
+				reply_markup: JSON.stringify({
+					inline_keyboard: [
+						[{text : '📞Связь📞', url : `t.me/@${User.MentorName}`}],
+						[{text : '📋Главное меню📋', callback_data : 'Главное менюAdm'}]			
+					]
+				})
+			})
 		}
 
-		if(msg.data == "Система обучения"){
-			await bot.sendMessage(chatId, `в админ панель приходит запрос типа:
+		if (msg.data == "Система обучения"){
+
+			User.photocheck = true;
+			//console.log("система обучения", User)
+			await bot.sendMessage(chatId, `
 
 				💡 Выполните пожалуйста 3 простых шага, чтобы перейти в систему обучения:
 
@@ -874,11 +1168,12 @@ const start = () => {
 
 				Модератор проверит скриншот и добавит Вас в систему обучения в течении 24 часов.
 
-				Важно. Отправлять скриншот необходимо в ответ на это сообщение!  Не наставнику, не в общий чат, а прямо сюда.`, Confirm)
+				Важно. Отправлять скриншот необходимо в ответ на это сообщение!  Не наставнику, не в общий чат, а прямо сюда.`, MainMenu)
 		}
 
-		if(msg.data == "Система обученияAdm"){
-			await bot.sendMessage(chatId, `в админ панель приходит запрос типа:
+		if (msg.data == "Система обученияAdm"){
+
+			await bot.sendMessage(chatId, `
 
 				💡 Выполните пожалуйста 3 простых шага, чтобы перейти в систему обучения:
 
@@ -892,77 +1187,112 @@ const start = () => {
 
 				Важно. Отправлять скриншот необходимо в ответ на это сообщение!  Не наставнику, не в общий чат, а прямо сюда.`, ConfirmAdm)
 		}
+		
+		if (msg.data == "Личный кабинет"){						
+				//console.log("User личный кабинет", User2)
+				await bot.sendMessage(chatId, `<b>Добро пожаловать в персональный кабинет бота.</b>
 
-		if(msg.data == "Личный кабинет"){
-			console.log("globall mentor is : ", global.mentor)
-			await bot.sendMessage(chatId, `Добро пожаловать в персональный кабинет бота. 
+					Вас пригласил: @${User.MentorName}
 
-				Вас пригласил: ${global.mentor}
+					Внимание чтобы стать наставником убедитесь что у Вас в настройках телеграма заполнена графа "Username"!
+
+					🔗 Ваша реферальная ссылка: 🔗 https://t.me/${msg.message.from.username}?start=${chatId}
+
+					Приглашено по Вашей реф. ссылке:
+					- всего ${User.Followers ? User.Followers : 0} чел
+					- за последние 30 дней: ${User2.MonthlyFollowers ? User2.MonthlyFollowers : 0} чел
+
+
+					Из них прошли регистрацию: ${User.FollowerRegistered ? User.FollowerRegistered : 0} чел`, { 
+					  parse_mode: "HTML", reply_markup: MainMenu.reply_markup
+					}
+				)					
+			
+		}		
+			
+
+		if (msg.data == "Личный кабинетAdm"){
+			
+			await bot.sendMessage(chatId, `<b>Добро пожаловать в персональный кабинет бота.</b>
+
+				Вас пригласил: @${User.MentorName}
 
 				Внимание чтобы стать наставником убедитесь что у Вас в настройках телеграма заполнена графа "Username"!
 
 				🔗 Ваша реферальная ссылка: 🔗 https://t.me/${msg.message.from.username}?start=${chatId}
 
 				Приглашено по Вашей реф. ссылке:
-				- всего 0 чел
+				- всего ${User.Followers ? User.Followers : 0} чел
 				- за последние 30 дней: 0 чел
 
 
-				Из них прошли регистрацию: 0 чел`, MainMenu)
+				Из них прошли регистрацию: ${User.FollowerRegistered ? User.FollowerRegistered : 0} чел`, { 
+				  parse_mode: "HTML", reply_markup: MainMenuAdm.reply_markup
+				}
+			)
 		}
 
-		if(msg.data == "Личный кабинетAdm"){
-			await bot.sendMessage(chatId, `Добро пожаловать в персональный кабинет бота. 
+		if (msg.data == "Главное меню"){
 
-				Вас пригласил: ${global.mentor}
+			let switcher;
 
-				Внимание чтобы стать наставником убедитесь что у Вас в настройках телеграма заполнена графа "Username"!
+			if (User.photocheck){User.photocheck = false};
+			//console.log("Главное меню user", User );
 
-				🔗 Ваша реферальная ссылка: 🔗 https://t.me/${msg.message.from.username}?start=${chatId}
+			if (User.UserPass || User.systemLearn == 'Система обученияAllowed'){switcher = MainButtonsProceed} else switcher = MainButtons;
 
-				Приглашено по Вашей реф. ссылке:
-				- всего 0 чел
-				- за последние 30 дней: 0 чел
+			//console.log("Useerr glavnoe menu", User.systemLearn)
+			//console.log("Главное меню", msg);
+			await bot.sendMessage(chatId, `<b>💡Здесь главное меню и отсюда я готов показать тебе все!</b>\n\n🔥Главное что надо понять - в твоих руках сейчас ультрасовременный продукт - который позволит тебе уже сегодня, начать делать деньги.`, { 
+				  parse_mode: "HTML", reply_markup: switcher.reply_markup
 
+				});
 
-				Из них прошли регистрацию: 0 чел`, MainMenuAdm)
+ 				
 		}
 
-		if(msg.data == "Главное меню"){
-			await bot.sendMessage(chatId, `💡Здесь главное меню и отсюда я готов показать тебе все!
+		if (msg.data == "Главное менюAdm"){
 
- 				🔥Главное что надо понять - в твоих руках сейчас ультрасовременный продукт - который позволит тебе уже сегодня, начать делать деньги.`,
- 				MainButtons)
-		}
-
-		if(msg.data == "Главное менюAdm"){
-			await bot.sendMessage(chatId, `💡Здесь главное меню и отсюда я готов показать тебе все!
-
- 				🔥Главное что надо понять - в твоих руках сейчас ультрасовременный продукт - который позволит тебе уже сегодня, начать делать деньги.`,
- 				AdminButtons)
+			await bot.sendMessage(chatId, `<b>💡Здесь главное меню и отсюда я готов показать тебе все!</b>\n\n🔥Главное что надо понять - в твоих руках сейчас ультрасовременный продукт - который позволит тебе уже сегодня, начать делать деньги.`,{
+ 				parse_mode: "HTML", reply_markup: AdminButtons.reply_markup
+ 			});
 		}
 
 		if (msg.data == "Администрирование"){
+
+			User.sendCombMessage = false;
+
 			await bot.sendMessage(chatId, `Администрирование`, AdmButProceed)
 		}
 
 		if (msg.data == "Статистика"){
+			await bot.sendMessage(chatId, `Загрузка...`)
+			let stat = await statisticsOverall();
+			//console.log("stat in stat ", stat)
 			await bot.sendMessage(chatId, `Статистика 
-				Всего подписчиков : 
-				За последние 30 дней : 
-				За последние 7 дней : 
-				За послледние 24 часа : `, MainStatistics)
+				Всего подписчиков : ${stat['все времена']}
+				За последние 30 дней : ${stat.месяц}
+				За последние 7 дней : ${stat['7 дней']}
+				За послледние 24 часа : ${stat['24 часа']}`, MainStatistics)
 		}
 
 		if (msg.data == "Выгрузить статистику"){
+
+			await bot.sendMessage(chatId, `Загрузка.......`)
+			
+			await csvFile().catch(console.dir);;	
+			
+			await bot.sendDocument(chatId, './Statistic.csv');
+			
 			await bot.sendMessage(chatId, `Статистика 
 				успешно экспортирована. `, BackToAdmin)
 		}
 
 		if (msg.data == "Статистика кликов"){
+
 			await bot.sendMessage(chatId, `Статистика кликов по разделам
 
-				Всего кликов: 0
+				Всего кликов: 289
 
 				Про компанию (RU): 99 кликов
 				Про команду (RU): 80 кликов
@@ -974,6 +1304,7 @@ const start = () => {
 		}
 
 		if (msg.data == "Вернуться в статистику"){
+
 			await bot.sendMessage(chatId, `Статистика 
 				Всего подписчиков : 
 				За последние 30 дней : 
@@ -983,6 +1314,39 @@ const start = () => {
 
 
 		if (msg.data == "Создать рассылку"){
+
+			User.sendCombMessage = true;			
+				
+				bot.on('message', (msg) => {
+
+					if (User.sendCombMessage){
+						
+					  const chatId = msg.chat.id;
+
+					  // Обработка текста
+					  const text = msg.text || '';
+					  //console.log("text inside Создать рассылку", text)
+					  if ( text.startsWith("/")){text = ''}
+					  // Обработка фотографий
+					  const photos = msg.photo || [];
+					  //console.log("Photos inside создать рассылку", photos)
+					  // Обработка видео
+					  const video = msg.video || {};
+					  //console.log("Video inside Создать рассылку", video)
+					  // Обработка аудио
+					  const audio = msg.audio || {};
+					  //console.log("Audio inside Создать рассылку", audio)
+					  // Скомпановать все в одно сообщение
+					  const combinedMessage = `Текст: ${text}\nФотографии: ${photos.length}\nВидео: ${video.file_id}\nАудио: ${audio.file_id}`;
+
+					  // Отправить сообщение в общий чат
+					  bot.sendMessage(chatId, combinedMessage);
+				  }
+
+			  });					
+
+			//console.log("UserSend after if", User.sendCombMessage);			
+
 			await bot.sendMessage(chatId, `стандартные методы телеграм прикрепить файлы, написать текст, прикрепить видео, записать аудио
 
 
@@ -994,6 +1358,8 @@ const start = () => {
 		}
 
 		if (msg.data == "Начать рассылку"){
+
+			User.sendCombMessage = false;
 			await bot.sendMessage(chatId, `Контент ушел в бота и виден всем !
 
 
@@ -1001,7 +1367,16 @@ const start = () => {
 				Всего отправлено: 203 сообщений`, BackToAdmin)
 		}
 
+		if (msg.data == "ОтменитьРассылку"){
+
+			User.sendCombMessage = false;
+			await bot.sendMessage(chatId, `Администрирование`, AdmButProceed)
+		}
+
 		if (msg.data == "Сделать фото"){
+
+			User.photocheck = false;
+			console.log("сделать фото", User)
 			await bot.sendMessage(chatId, `фото
 
 
@@ -1009,30 +1384,31 @@ const start = () => {
 		}
 
 		if (msg.data == "КлиентПруфФото"){
+
 			await bot.sendMessage(chatId, `✅Скриншот отправлен на утверждение✅
 
 				Как только модератор  проверит информацию. Вы получите уведомление`, BackToAdmin)
 		}
 
 		if (msg.data == "Подтвердить"){
-			await bot.sendMessage(chatId, `Пройти к обучению: @UKGStudy_bot`, ToLearningSystem)
+			//console.log("Подтвердить msg", msg)
+			writeUserPass(msg.from)
+			User.systemLearn = 'Система обученияAllowed';
+			await bot.sendMessage(chatId, `Пройти к обучению: UKGStudy_bot`, ToLearningSystem)
 		}
 
 		if (msg.data == "Система обученияAllowed"){
-			await bot.sendMessage(chatId, `🎓 Пройдите пошаговую систему обучения.
 
-				✅ Получите занния которые помогут Вам построть большой международный бизнес с 
-				компанией UKG Holding и нашей професиональной командой!`, LearningSystem)
+			await bot.sendMessage(chatId, `<b>🎓 Пройдите пошаговую систему обучения.\n\n✅ Получите занния которые помогут Вам построть большой международный бизнес с компанией UKG Holding и нашей професиональной командой!</b>`, {parse_mode : "HTML", reply_markup : LearningSystem.reply_markup})
 		}
 
 		if (msg.data == "Система обученияAllowedAdm"){
-			await bot.sendMessage(chatId, `🎓 Пройдите пошаговую систему обучения.
 
-				✅ Получите занния которые помогут Вам построть большой международный бизнес с 
-				компанией UKG Holding и нашей професиональной командой!`, LearningSystemAdm)
+			await bot.sendMessage(chatId, `<b>🎓 Пройдите пошаговую систему обучения.\n\n✅ Получите занния которые помогут Вам построть большой международный бизнес с компанией UKG Holding и нашей професиональной командой!</b>`, {parse_mode : "HTML", reply_markup : LearningSystemAdm.reply_markup})
 		}
 
 		if (msg.data == "Тренинг старт на миллион"){
+
 			await bot.sendMessage(chatId, `Вы узнаете:
 
 				🔸Как стать ТОП-лидером и долларовым Мультимиллионером.
@@ -1049,6 +1425,7 @@ const start = () => {
 		}
 
 		if (msg.data == "Тренинг старт на миллионAdm"){
+
 			await bot.sendMessage(chatId, `Вы узнаете:
 
 				🔸Как стать ТОП-лидером и долларовым Мультимиллионером.
@@ -1065,6 +1442,7 @@ const start = () => {
 		}
 
 		if (msg.data == 'Академия продаж'){
+
 			await bot.sendMessage(chatId, `Главная тема - как закрывать 70% сделок 🔥
 				(и делать от 10 партнеров в первую линию каждый месяц)
 
@@ -1077,6 +1455,7 @@ const start = () => {
 		}
 
 		if (msg.data == 'Академия продажAdm'){
+
 			await bot.sendMessage(chatId, `Главная тема - как закрывать 70% сделок 🔥
 				(и делать от 10 партнеров в первую линию каждый месяц)
 
@@ -1089,6 +1468,7 @@ const start = () => {
 		}
 
 		if (msg.data == 'Работа с соцсетями'){
+
 			await bot.sendMessage(chatId, `После прохождения тренинга «Работа с соц сетями» вам больше не придется:
 
 				❌Составлять список контактов,
@@ -1115,6 +1495,7 @@ const start = () => {
 		}
 		
 		if (msg.data == 'Работа с соцсетямиAdm'){
+
 			await bot.sendMessage(chatId, `После прохождения тренинга «Работа с соц сетями» вам больше не придется:
 
 				❌Составлять список контактов,
@@ -1138,9 +1519,76 @@ const start = () => {
 				ГЛАВНОЕ - Научись пользоваться системой!
 
 				Ссылка на видео - https://youtu.be/2yxdprLS2zg`, SocialMediaWorkAdm)
+
 			}
+
+			if (msg.data == "ОтправитьСкрин"){
+
+				User.photocheck = false;
+				console.log("отправить скрин", User)
+				await bot.sendMessage(chatId, `✅Скриншот отправлен на утверждение✅Как только модератор  проверит информацию. Вы получите уведомление`, MainMenu)
+				await bot.sendPhoto(adminName, User.photo, {caption: 'Подтвердите регистрацию пользователя'});
+				await bot.sendMessage(adminName, `Пользователь: @${User.UserName}`, ConfirmPhotoAprove )
+
+			}
+
+			if (msg.data == "ОтменитьСкрин"){
+				
+				await bot.sendMessage(chatId, `
+
+				💡 Выполните пожалуйста 3 простых шага, чтобы перейти в систему обучения:
+
+				Шаг 1: Иметь личный кабинет с депозитом на сайте: https://ukgholding.net/cabinet
+
+				Шаг 2: Сделать скриншот личного кабинета
+
+				Шаг 3: Отправить скриншот в ответ на это сообщение
+
+				Модератор проверит скриншот и добавит Вас в систему обучения в течении 24 часов.
+
+				Важно. Отправлять скриншот необходимо в ответ на это сообщение!  Не наставнику, не в общий чат, а прямо сюда.`, MainMenu)
+			}
+
+			if (msg.data == "ПодтвердитьPhotoAprove"){
+
+				await bot.sendMessage(User.TG_ID, `Пройти к обучению`, Confirm);
+				await bot.sendMessage(chatId, `Одобрение успешно отправлено.`, MainMenuAdm)
+
+			}
+
 		} catch (error){return error;}
 	})
+
+	bot.on('photo', async (msg) => {
+
+	  try{
+
+	  		 if (User.photocheck){
+
+	  		 		const chatId = msg.chat.id;
+				    //console.log("чат айди :", chatId)
+					  const photo = msg.photo;
+					  const fileId = photo[photo.length - 1].file_id;
+					  User.photo = fileId;
+
+					  //console.log("User is bot.on(photo):", User);
+					  await bot.sendMessage(chatId, `Вы уверены что хотите отправить этот скриншот ?`, AreYouShure);
+					  
+					  //bot.sendPhoto(chatId, fileId, {caption: 'Вы прислали фото:'});
+					  // Ваши дальнейшие действия с изображением
+					  //console.log('Получено фото:', photo);					  
+					  //console.log(admin)
+
+				  }
+
+					  
+		} catch (err){console.log(err)}	 	  
+					  		
+	});
+
+
+		
+		
 
 }
 
