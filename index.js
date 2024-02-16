@@ -317,7 +317,7 @@ const SendingMessages  = {
 	reply_markup: JSON.stringify({
 		inline_keyboard: [
 			[{text : 'Начать рассылку', callback_data : 'Начать рассылку'}],
-			[{text : 'Отменить', callback_data : 'Создать рассылку'}],
+			[{text : 'Отменить', callback_data : 'Администрирование'}],
 			[{text : 'Назад', callback_data : 'Администрирование'}]
 		]
 	})
@@ -1259,7 +1259,7 @@ const start = () => {
 		}
 
 		if (msg.data == "Администрирование"){
-
+			bot.off("message");
 			
 			User.sendCombMessage = false;
 
@@ -1315,7 +1315,7 @@ const start = () => {
 
 
 		if (msg.data == "Создать рассылку"){
-
+			//console.log("msg data ", msg)
 			User.sendCombMessage = true;			
 				
 			let mediaInfo = [];
@@ -1406,18 +1406,14 @@ const start = () => {
 
 			        console.log("mediaInfo ", mediaInfo);
 			        // Скомпановать все в одно сообщение
-			        const combinedMessage = mediaInfo.join('\n');
+			        const combinedMessage = mediaInfo.join('\n');			            
 
+	            // Отправка текста
+	            await bot.sendMessage(chatId, `Создано сообщение из ваших материалов:\n${combinedMessage}`, SendingMessages
+
+	            );
 			        
-
-			            
-
-			            // Отправка текста
-			            await bot.sendMessage(chatId, `<b>Создано сообщение из ваших материалов:\n${combinedMessage}</b>`,
-			                { parse_mode: "HTML", reply_markup: SendingMessages.reply_markup }
-
-			            );
-			        
+			        //
 			    }
 			});				
 
@@ -1478,14 +1474,10 @@ const start = () => {
 			mediaInfo = [];
 			console.log("mediaInfo cancel sending", mediaInfo);
 			User.sendCombMessage = false;
-			await bot.sendMessage(chatId, `стандартные методы телеграм прикрепить файлы, написать текст, прикрепить видео, записать аудио
+			await bot.sendMessage(chatId, `Администрирование
 
 
-
-				Зона для отображения выгружаемых файлов
-
-
-				`, SendingMessages)
+				`, AdmButProceed)
 		}
 
 		if (msg.data == "Сделать фото"){
