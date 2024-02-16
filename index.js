@@ -8,6 +8,7 @@ let admin = false;
 let adminName = '338176795';
 let User={};
 let User2={};
+let mediaInfo = [];
 User.systemLearn = 'Система обучения';
 
 const MainButtons = {
@@ -96,7 +97,7 @@ const AboutCompButtonsAdm = {
 	reply_markup: JSON.stringify({
 		inline_keyboard: [
 			[{text : '💎Про команду💎', callback_data : 'Про команду'}],
-			[{text : '📱Связь с наставником📱', callback_data : 'Связь с наставником'}],
+			[{text : '📱Связь с наставником📱', callback_data : 'Связь с наставникомAdm'}],
 			[{text : '📋Главное меню📋', callback_data : 'Главное менюAdm'}]
 			]
 	})
@@ -116,7 +117,7 @@ const AboutTeamButtonsAdm = {
 	reply_markup: JSON.stringify({
 		inline_keyboard: [
 			[{text : '🏆Пассивный доход в компании🏆', callback_data : 'Пассивный доход'}],
-			[{text : '📱Связь с наставником📱', callback_data : 'Связь с наставником'}],
+			[{text : '📱Связь с наставником📱', callback_data : 'Связь с наставникомAdm'}],
 			[{text : '📋Главное меню📋', callback_data : 'Главное менюAdm'}]
 		]
 	})
@@ -136,7 +137,7 @@ const AboutPassiveProfitAdm = {
 	reply_markup: JSON.stringify({
 		inline_keyboard: [
 			[{text : '❤️Маркетинг план❤️', callback_data : 'Маркетинг план'}],
-			[{text : '📱Связь с наставником📱', callback_data : 'Связь с наставником'}],
+			[{text : '📱Связь с наставником📱', callback_data : 'Связь с наставникомAdm'}],
 			[{text : '📋Главное меню📋', callback_data : 'Главное менюAdm'}]
 		]
 	})
@@ -156,7 +157,7 @@ const AboutMarketingAdm = {
 	reply_markup: JSON.stringify({
 		inline_keyboard: [
 			[{text : '🗣Отзывы партнеров🗣', callback_data : 'Отзывы партнеров'}],
-			[{text : '📱Связь с наставником📱', callback_data : 'Связь с наставником'}],
+			[{text : '📱Связь с наставником📱', callback_data : 'Связь с наставникомAdm'}],
 			[{text : '📋Главное меню📋', callback_data : 'Главное менюAdm'}]
 		]
 	})
@@ -176,7 +177,7 @@ const AboutRewievsPartnersAdm =  {
 	reply_markup: JSON.stringify({
 		inline_keyboard: [
 			[{text : '🚀Возможности системы автоматизации🚀', callback_data : 'Возможности системы'}],
-			[{text : '📱Связь с наставником📱', callback_data : 'Связь с наставником'}],
+			[{text : '📱Связь с наставником📱', callback_data : 'Связь с наставникомAdm'}],
 			[{text : '📋Главное меню📋', callback_data : 'Главное менюAdm'}]
 		]
 	})
@@ -196,7 +197,7 @@ const AboutSocialAdm = {
 	reply_markup: JSON.stringify({
 		inline_keyboard: [
 			[{text : '🧭Наши соцсети🧭', callback_data : 'Наши соцсети'}],
-			[{text : '📱Связь с наставником📱', callback_data : 'Связь с наставником'}],
+			[{text : '📱Связь с наставником📱', callback_data : 'Связь с наставникомAdm'}],
 			[{text : '📋Главное меню📋', callback_data : 'Главное менюAdm'}]
 		]
 	})
@@ -224,7 +225,7 @@ const AboutMentor = {
 const AboutMentorAdm = {
 	reply_markup: JSON.stringify({
 		inline_keyboard: [
-			[{text : '📱Связь с наставником📱', callback_data : 'Связь с наставником'}],
+			[{text : '📱Связь с наставником📱', callback_data : 'Связь с наставникомAdm'}],
 			[{text : '📋Главное меню📋', callback_data : 'Главное менюAdm'}]
 		]
 	})
@@ -782,6 +783,7 @@ const start = () => {
 	}
 
 	async function messageHandler(msg) {
+
 
     if (User.sendCombMessage) {
 
@@ -1439,7 +1441,8 @@ const start = () => {
 			//console.log("msg data ", msg)
 			User.sendCombMessage = true;			
 			//bot.off("message");
-			let mediaInfo = [];
+			bot.off('message', messageHandler);
+			
 			console.log("mediaInfo sending", mediaInfo);
 			delete User2.text;
 			delete User2.photo;
@@ -1449,124 +1452,8 @@ const start = () => {
 			delete User2.video_note;
 			delete User2.caption;
 
-			bot.on('message', async (msg) => {
-
-			    if (User.sendCombMessage) {
-
-			        const chatId = msg.chat.id;
-			        console.log("Message mass sending", msg);
-
-			        // Обработка текста
-			        let text = msg.text || '';
-			        if (text.startsWith("/")) {
-			        	return;			            
-			        }
-			        console.log("text inside bot.on", text)
-			        // Обработка фотографии (всегда будет одна)
-			        const photo = msg.photo ? msg.photo[msg.photo.length - 1] : null;
-
-			        // Обработка видео
-			        const video = msg.video || {};
-
-			        // Обработка аудио
-			        const audio = msg.audio || {};
-
-			        const voice = msg.voice || {};
-
-			        const video_note = msg.video_note || {};
-
-
-
-			        if (text) {
-			        		console.log("text inside text fired", text)
-							    // Если текст уже есть в массиве, заменяем его
-							    const textIndex = mediaInfo.findIndex(info => info.startsWith('Текст:'));
-							    if (textIndex !== -1) {
-							        mediaInfo[textIndex] = `Текст: ${text}`;
-							    } else {
-							        // Иначе добавляем новый текст
-							        mediaInfo.push(`Текст: ${text}`);
-							    }
-							    User2.text = text; // Перезаписываем значение при каждом новом тексте
-							}
-
-							if (msg.caption) {
-								mediaInfo.push(`Caption:  ${msg.caption}`)
-			          User2.caption = msg.caption;
-			          	if (msg.caption_entities) {
-			          		User2.caption_entities = msg.caption_entities
-			          	}
-			        }
-
-							//console.log("Photo inside preparing sendings", msg.caption);
-			        if (photo) {
-			            mediaInfo.push(`Фото: загружено`);
-			            User2.photo = photo.file_id; // Перезаписываем значение при каждой загрузке фотографии
-			            
-			        }
-
-			        if (video.file_id) {
-							    const videoIndex = mediaInfo.findIndex(info => info.startsWith('Видео:'));
-							    if (videoIndex !== -1) {
-							        mediaInfo[videoIndex] = `Видео: загружено`;
-							    } else {
-							        mediaInfo.push(`Видео: загружено`);
-							    }
-							    User2.video = video.file_id;
-							}
-
-							if (audio.file_id) {
-							    const audioIndex = mediaInfo.findIndex(info => info.startsWith('Аудио:'));
-							    if (audioIndex !== -1) {
-							        mediaInfo[audioIndex] = `Аудио: загружено`;
-							    } else {
-							        mediaInfo.push(`Аудио: загружено`);
-							    }
-							    User2.audio = audio.file_id;
-							}
-
-							if (voice.file_id) {
-							    const voiceIndex = mediaInfo.findIndex(info => info.startsWith('Voice:'));
-							    if (voiceIndex !== -1) {
-							        mediaInfo[voiceIndex] = `Voice загружен`;
-							    } else {
-							        mediaInfo.push(`Voice загружен`);
-							    }
-							    User2.voice = voice.file_id;
-							}
-
-							if (video_note.file_id) {
-							    const videoNoteIndex = mediaInfo.findIndex(info => info.startsWith('Video_note:'));
-							    if (videoNoteIndex !== -1) {
-							        mediaInfo[videoNoteIndex] = `Video_note загружен`;
-							    } else {
-							        mediaInfo.push(`Video_note загружен`);
-							    }
-							    User2.video_note = video_note.file_id;
-							}
-
-			        console.log("mediaInfo ", mediaInfo);
-			        // Скомпановать все в одно сообщение
-			        const combinedMessage = mediaInfo.join('\n');
-
-			        console.log("user2 before msg.caption ", User2)
-			        
-			        if (msg.caption) {
-			        	const captionEnt = msg.caption_entities;
-			        	console.log("captionEnt", captionEnt)
-			        	const capp = `<b>Создано сообщение из ваших материалов:\n${combinedMessage}</b>`;
-			        	await bot.sendMessage(chatId, capp, {
-			        		parse_mode: "HTML",
-			        		reply_markup: SendingMessages.reply_markup
-			        	});
-
-			        } else await bot.sendMessage(chatId, `Создано сообщение из ваших материалов:\n${combinedMessage}`, SendingMessages
-
-	            );
-			        
-			        //
-			    }
-			});				
+			bot.on('message', messageHandler);
+			mediaInfo = [];				
 
 			//console.log("UserSend after if", User.sendCombMessage);			
 
@@ -1709,7 +1596,7 @@ const start = () => {
 
 			
 			mediaInfo = [];
-			console.log("mediaInfo cancel sending", mediaInfo);
+			//console.log("mediaInfo cancel sending", mediaInfo);
 			User.sendCombMessage = false;
 			await bot.sendMessage(chatId, `стандартные методы телеграм прикрепить файлы, написать текст, прикрепить видео, записать аудио
 
