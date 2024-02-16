@@ -317,7 +317,7 @@ const SendingMessages  = {
 	reply_markup: JSON.stringify({
 		inline_keyboard: [
 			[{text : 'Начать рассылку', callback_data : 'Начать рассылку'}],
-			[{text : 'Отменить', callback_data : 'Администрирование'}],
+			[{text : 'Отменить', callback_data : 'Создать рассылку'}],
 			[{text : 'Назад', callback_data : 'Администрирование'}]
 		]
 	})
@@ -490,297 +490,298 @@ const start = () => {
 
 	])
 
-		const dbUsers = client.db('UKGLearningBot').collection('Users');
-		//let mentorI;		
+	const dbUsers = client.db('UKGLearningBot').collection('Users');
+	//let mentorI;		
 
+	
+	
+	async function writeGetUser(data, mentor){
 		
-		
-		async function writeGetUser(data, mentor){
+		try {
+
+			//console.debug("data Debug", data);
+			//console.log("mentor inside writeGetUser", mentor);
+			let User = {};
+
+			await client.connect();
 			
-			try {
+			const filter = {TG_ID: data.id};
+			const mentorOne = {TG_ID: Number(mentor)};			
+			let now = new Date();
+			now.setUTCHours(now.getUTCHours() + 2);
+			//const formattedDate = formatDate(now);
+			
+			await dbUsers.updateOne(filter,
 
-				//console.debug("data Debug", data);
-				//console.log("mentor inside writeGetUser", mentor);
-				let User = {};
+				{$set: {"UserName": data.username, "Name": data.first_name, "Surname": data.last_name}, $setOnInsert: {"Mentor": mentor, "RegDate": now}}, 
+				{upsert:true}
 
-				await client.connect();
-				
-				const filter = {TG_ID: data.id};
-				const mentorOne = {TG_ID: Number(mentor)};			
-				let now = new Date();
-				now.setUTCHours(now.getUTCHours() + 2);
-				//const formattedDate = formatDate(now);
-				
-				await dbUsers.updateOne(filter,
+			)				
+			
+			let get_user = await dbUsers.findOne(filter); 
+			let get_mentor = await dbUsers.findOne(mentorOne);
+			//console.log("getMent", get_mentor);
+			mentor_data = {TG_ID: get_mentor.TG_ID}
+			//console.log('trying get_user.MentorName',get_user.MentorName == true);
+			
+			if (!get_user.MentorName){
 
-					{$set: {"UserName": data.username, "Name": data.first_name, "Surname": data.last_name}, $setOnInsert: {"Mentor": mentor, "RegDate": now}}, 
-					{upsert:true}
+				await dbUsers.updateOne(filter, { 
 
-				)				
-				
-				let get_user = await dbUsers.findOne(filter); 
-				let get_mentor = await dbUsers.findOne(mentorOne);
-				//console.log("getMent", get_mentor);
-				mentor_data = {TG_ID: get_mentor.TG_ID}
-				//console.log('trying get_user.MentorName',get_user.MentorName == true);
-				
-				if (!get_user.MentorName){
+		    	$set: { "MentorName": get_mentor.UserName }
+		  
+		  	}, { upsert: true })
 
-					await dbUsers.updateOne(filter, { 
 
-			    	$set: { "MentorName": get_mentor.UserName }
+			}			
+
+			get_user = await dbUsers.findOne(filter); 			
+
+			if (get_user.UserName != get_mentor.UserName ){
+
+				//console.log("Mentor data fired", get_mentor);
+			  const followersCount = isNaN(get_mentor.Followers) ? 1 : get_mentor.Followers + 1;
+
+			  await dbUsers.updateOne(mentor_data, {
+
+			  	$set: {"Followers": followersCount}
 			  
-			  	}, { upsert: true })
+			  })
 
-
-				}			
-
-				get_user = await dbUsers.findOne(filter); 			
-
-				if (get_user.UserName != get_mentor.UserName ){
-
-					//console.log("Mentor data fired", get_mentor);
-				  const followersCount = isNaN(get_mentor.Followers) ? 1 : get_mentor.Followers + 1;
-
-				  await dbUsers.updateOne(mentor_data, {
-
-				  	$set: {"Followers": followersCount}
-				  
-				  })
-
-				}
-				
-				User = get_user;
-				//console.log("User inside writeGetUser", User)
-
-				//User.Mentor = get_mentor.UserName;
-				
-				//console.log("USer inside WriteGet", User)
-				
-				return User;
-				
-			} finally {
-			
-				await client.close();
-			
 			}
-		}
+			
+			User = get_user;
+			//console.log("User inside writeGetUser", User)
 
+			//User.Mentor = get_mentor.UserName;
+			
+			//console.log("USer inside WriteGet", User)
+			
+			return User;
+			
+		} finally {
 		
+			await client.close();
+		
+		}
+	}
 
-		async function writeUserPass(data){
+	
+
+	async function writeUserPass(data){
+		
+		try {
+
+			//console.debug("data Debug WriteUserPass", data);
 			
-			try {
-
-				//console.debug("data Debug WriteUserPass", data);
-				
-				
-				await client.connect();
-				
-				const filter = {TG_ID: data.id};
-					
-				let get_user = await dbUsers.findOne(filter);
-				const mentorFilter = {TG_ID: Number(get_user.Mentor)}; 	
-				let get_mentor = await dbUsers.findOne(mentorFilter);	
-				//console.log('mentorFilter inside writeUserPass', mentorFilter);
-
-				const result = await dbUsers.updateOne(
-
-				  filter,
-				    { $set: { "UserPass": "Passed" } },
-				  		{ upsert: true }
-				);
-
-				const followerRegisteredCount = isNaN(get_mentor.FollowerRegistered) ? 1 : get_mentor.FollowerRegistered + 1;				
-
-				//console.log("Before mentorUpdate: get_mentor", get_mentor);
-				const mentorUpdate = await dbUsers.updateOne(
-
-					mentorFilter,
-						{$set: { "FollowerRegistered": followerRegisteredCount }},
-							{ upsert: true}
-
-				)				
-
-				//console.log('mentorUpdate modyfier count', mentorUpdate.modifiedCount);
-				//console.log("mentorUpdate upserted ID", mentorUpdate.upsertedId);
-				//console.log("result writeUserPass ", result);
-				
-			} finally {
 			
-				await client.close();
+			await client.connect();
 			
-			}
-		}
-
-		async function getUser(data){
-
-			try {
-
-				await client.connect();				
-
-				const filter = {TG_ID: data.id}
-				let get = await dbUsers.findOne(filter)
+			const filter = {TG_ID: data.id};
 				
-				console.log("get User inside ", get)
+			let get_user = await dbUsers.findOne(filter);
+			const mentorFilter = {TG_ID: Number(get_user.Mentor)}; 	
+			let get_mentor = await dbUsers.findOne(mentorFilter);	
+			//console.log('mentorFilter inside writeUserPass', mentorFilter);
 
-				 // Текущая дата и время
-				const currentDateTime = new Date();
+			const result = await dbUsers.updateOne(
 
-				// Начальная дата (текущая дата и время)
-				const endDate = new Date(currentDateTime);
-				//console.log("start date", endDate);
-				// Конечная дата (startDate - 1 месяц)
-				const startDate = new Date(endDate);
-				startDate.setMonth(endDate.getMonth() - 1);
-				//console.log("endDate ", startDate)
+			  filter,
+			    { $set: { "UserPass": "Passed" } },
+			  		{ upsert: true }
+			);
 
-				// Формируем запрос для выборки данных за определенный период и по полю MentorName
-				const query = {
-				  RegDate: {
-				    $gte: startDate, // Больше или равно начальной дате
-				    $lt: endDate     // Меньше конечной даты
-				  },
-				  MentorName: get.UserName // Укажите имя наставника, по которому хотите фильтровать
-				};
+			const followerRegisteredCount = isNaN(get_mentor.FollowerRegistered) ? 1 : get_mentor.FollowerRegistered + 1;				
 
-				// Выполняем запрос к базе данных
-				const result = await dbUsers.find(query).toArray();
+			//console.log("Before mentorUpdate: get_mentor", get_mentor);
+			const mentorUpdate = await dbUsers.updateOne(
 
-				// В переменной result теперь содержатся записи, удовлетворяющие условиям времени и имени наставника
-				//console.log("result", result.length);
-				User2.MonthlyFollowers = result.length;
+				mentorFilter,
+					{$set: { "FollowerRegistered": followerRegisteredCount }},
+						{ upsert: true}
 
-				return get;
+			)				
 
-			} finally {
-
-				await client.close();
-
-			}
+			//console.log('mentorUpdate modyfier count', mentorUpdate.modifiedCount);
+			//console.log("mentorUpdate upserted ID", mentorUpdate.upsertedId);
+			//console.log("result writeUserPass ", result);
+			
+		} finally {
+		
+			await client.close();
+		
 		}
+	}
 
+	async function getUser(data){
 
-		async function csvFile() {
+		try {
 
-		  try {
+			await client.connect();				
 
-		    await client.connect();
+			const filter = {TG_ID: data.id}
+			let get = await dbUsers.findOne(filter)
+			
+			console.log("get User inside ", get)
 
-		    const csvFields = ['TG_ID', 'UserName', 'Name', 'Surname', 'MentorName', 'RegDate'];
+			 // Текущая дата и время
+			const currentDateTime = new Date();
 
-		    const userData = await dbUsers.find({}).toArray();
+			// Начальная дата (текущая дата и время)
+			const endDate = new Date(currentDateTime);
+			//console.log("start date", endDate);
+			// Конечная дата (startDate - 1 месяц)
+			const startDate = new Date(endDate);
+			startDate.setMonth(endDate.getMonth() - 1);
+			//console.log("endDate ", startDate)
 
-		    const formattedUserData = userData.map(user => {
+			// Формируем запрос для выборки данных за определенный период и по полю MentorName
+			const query = {
+			  RegDate: {
+			    $gte: startDate, // Больше или равно начальной дате
+			    $lt: endDate     // Меньше конечной даты
+			  },
+			  MentorName: get.UserName // Укажите имя наставника, по которому хотите фильтровать
+			};
 
-		      const formattedUser = {};
+			// Выполняем запрос к базе данных
+			const result = await dbUsers.find(query).toArray();
 
-		      csvFields.forEach(field => {
+			// В переменной result теперь содержатся записи, удовлетворяющие условиям времени и имени наставника
+			//console.log("result", result.length);
+			User2.MonthlyFollowers = result.length;
 
-		        formattedUser[field] = user[field];
+			return get;
 
-		      });
+		} finally {
 
-		      return formattedUser;
+			await client.close();
 
-		    });
-
-		    const json2csvParser = new Json2CsvParser({
-
-		      csvFields
-
-		    });
-
-		    const csvData = json2csvParser.parse(formattedUserData);
-
-		    fs.writeFile('./Statistic.csv', csvData, function (err) {
-
-		      if (err) throw err;
-
-		      //console.log('Wrote to Statistic.csv successfully!');
-
-		    });
-
-		    //console.log('File downloaded successfully');
-
-		  } finally {
-
-		    await client.close();
-		  }
 		}
+	}
 
-		async function statisticsOverall() {
-		  try {
-		    await client.connect();
 
-		    // Текущая дата и время
-		    const currentDateTime = new Date();
+	async function csvFile() {
 
-		    // Записи за месяц
-		    const startDateMonth = new Date(currentDateTime);
-		    startDateMonth.setMonth(currentDateTime.getMonth() - 1);
+	  try {
 
-		    // Записи за 7 дней
-		    const startDate7Days = new Date(currentDateTime);
-		    startDate7Days.setDate(currentDateTime.getDate() - 7);
+	    await client.connect();
 
-		    // Записи за 24 часа
-		    const startDate24Hours = new Date(currentDateTime);
-		    startDate24Hours.setHours(currentDateTime.getHours() - 24);
+	    const csvFields = ['TG_ID', 'UserName', 'Name', 'Surname', 'MentorName', 'RegDate'];
 
-		    // Записи за все времена
-		    const queryAllTime = {};
+	    const userData = await dbUsers.find({}).toArray();
 
-		    const queries = [
-		      {
-		        period: 'месяц',
-		        query: {
-		          RegDate: {
-		            $gte: startDateMonth,
-		            $lt: currentDateTime
-		          }
-		        }
-		      },
-		      {
-		        period: '7 дней',
-		        query: {
-		          RegDate: {
-		            $gte: startDate7Days,
-		            $lt: currentDateTime
-		          }
-		        }
-		      },
-		      {
-		        period: '24 часа',
-		        query: {
-		          RegDate: {
-		            $gte: startDate24Hours,
-		            $lt: currentDateTime
-		          }
-		        }
-		      },
-		      {
-		        period: 'все времена',
-		        query: queryAllTime
-		      }
-		    ];
+	    const formattedUserData = userData.map(user => {
 
-		    const resultObject = {};
+	      const formattedUser = {};
 
-		    for (const { period, query } of queries) {
-		      const result = await dbUsers.find(query).toArray();
+	      csvFields.forEach(field => {
 
-		      //console.log(`Результат за ${period}:`, result.length);
+	        formattedUser[field] = user[field];
 
-		      resultObject[period] = result.length;
-		    }
+	      });
 
-		    return resultObject;
-		  } finally {
-		    await client.close();
-		  }
-		}
+	      return formattedUser;
 
+	    });
+
+	    const json2csvParser = new Json2CsvParser({
+
+	      csvFields
+
+	    });
+
+	    const csvData = json2csvParser.parse(formattedUserData);
+
+	    fs.writeFile('./Statistic.csv', csvData, function (err) {
+
+	      if (err) throw err;
+
+	      //console.log('Wrote to Statistic.csv successfully!');
+
+	    });
+
+	    //console.log('File downloaded successfully');
+
+	  } finally {
+
+	    await client.close();
+	  }
+	}
+
+	async function statisticsOverall() {
+	  try {
+	    await client.connect();
+
+	    // Текущая дата и время
+	    const currentDateTime = new Date();
+
+	    // Записи за месяц
+	    const startDateMonth = new Date(currentDateTime);
+	    startDateMonth.setMonth(currentDateTime.getMonth() - 1);
+
+	    // Записи за 7 дней
+	    const startDate7Days = new Date(currentDateTime);
+	    startDate7Days.setDate(currentDateTime.getDate() - 7);
+
+	    // Записи за 24 часа
+	    const startDate24Hours = new Date(currentDateTime);
+	    startDate24Hours.setHours(currentDateTime.getHours() - 24);
+
+	    // Записи за все времена
+	    const queryAllTime = {};
+
+	    const queries = [
+	      {
+	        period: 'месяц',
+	        query: {
+	          RegDate: {
+	            $gte: startDateMonth,
+	            $lt: currentDateTime
+	          }
+	        }
+	      },
+	      {
+	        period: '7 дней',
+	        query: {
+	          RegDate: {
+	            $gte: startDate7Days,
+	            $lt: currentDateTime
+	          }
+	        }
+	      },
+	      {
+	        period: '24 часа',
+	        query: {
+	          RegDate: {
+	            $gte: startDate24Hours,
+	            $lt: currentDateTime
+	          }
+	        }
+	      },
+	      {
+	        period: 'все времена',
+	        query: queryAllTime
+	      }
+	    ];
+
+	    const resultObject = {};
+
+	    for (const { period, query } of queries) {
+	      const result = await dbUsers.find(query).toArray();
+
+	      //console.log(`Результат за ${period}:`, result.length);
+
+	      resultObject[period] = result.length;
+	    }
+
+	    return resultObject;
+	  } finally {
+	    await client.close();
+	  }
+	}
+
+	
 
 
 		
@@ -804,6 +805,7 @@ const start = () => {
 				
 		if (msg.chat.id == adminName) {
 
+			await client.connect();
 			admin = true;
 		
 		}
@@ -1259,7 +1261,7 @@ const start = () => {
 		}
 
 		if (msg.data == "Администрирование"){
-			bot.off("message");
+
 			
 			User.sendCombMessage = false;
 
@@ -1317,10 +1319,16 @@ const start = () => {
 		if (msg.data == "Создать рассылку"){
 			//console.log("msg data ", msg)
 			User.sendCombMessage = true;			
-				
+			bot.off("message");
 			let mediaInfo = [];
 			console.log("mediaInfo sending", mediaInfo);
-
+			delete User2.text;
+			delete User2.photo;
+			delete User2.video;
+			delete User2.audio;
+			delete User2.voice;
+			delete User2.video_note;
+			delete User2.caption;
 			bot.on('message', async (msg) => {
 
 			    if (User.sendCombMessage) {
@@ -1347,6 +1355,8 @@ const start = () => {
 
 			        const video_note = msg.video_note || {};
 
+
+
 			        if (text) {
 							    // Если текст уже есть в массиве, заменяем его
 							    const textIndex = mediaInfo.findIndex(info => info.startsWith('Текст:'));
@@ -1359,9 +1369,19 @@ const start = () => {
 							    User2.text = text; // Перезаписываем значение при каждом новом тексте
 							}
 
+							if (msg.caption) {
+								mediaInfo.push(`Caption:  ${msg.caption}`)
+			          User2.caption = msg.caption;
+			          	if (msg.caption_entities) {
+			          		User2.caption_entities = msg.caption_entities
+			          	}
+			        }
+
+							//console.log("Photo inside preparing sendings", msg.caption);
 			        if (photo) {
 			            mediaInfo.push(`Фото: загружено`);
 			            User2.photo = photo.file_id; // Перезаписываем значение при каждой загрузке фотографии
+			            
 			        }
 
 			        if (video.file_id) {
@@ -1406,10 +1426,19 @@ const start = () => {
 
 			        console.log("mediaInfo ", mediaInfo);
 			        // Скомпановать все в одно сообщение
-			        const combinedMessage = mediaInfo.join('\n');			            
+			        const combinedMessage = mediaInfo.join('\n');
 
-	            // Отправка текста
-	            await bot.sendMessage(chatId, `Создано сообщение из ваших материалов:\n${combinedMessage}`, SendingMessages
+			        console.log("user2 before msg.caption ", User2)
+			        if (msg.caption) {
+			        	const captionEnt = msg.caption_entities;
+			        	console.log("captionEnt", captionEnt)
+			        	const capp = `<b>Создано сообщение из ваших материалов:\n${combinedMessage}</b>`;
+			        	await bot.sendMessage(chatId, capp, {
+			        		parse_mode: "HTML",
+			        		reply_markup: SendingMessages.reply_markup
+			        	});
+
+			        } else await bot.sendMessage(chatId, `Создано сообщение из ваших материалов:\n${combinedMessage}`, SendingMessages
 
 	            );
 			        
@@ -1430,19 +1459,38 @@ const start = () => {
 		}
 
 		if (msg.data == "Начать рассылку"){
+			await client.connect();
 
-			/*/ Отправка фотографии
-      if (photo) {
-          const photoId = photo.file_id;
-          await bot.sendPhoto(chatId, photoId, { caption: 'Фото' });
+			const messageToSend = `<b>${User2.text}</b>`;
+      const allUserIds = await dbUsers.find({}, { projection: { TG_ID: 1, _id: 0 } }).toArray();
+
+			await console.log("all Users Ids ", allUserIds);
+
+			
+
+			console.log("User2 Begin Sending", User2)
+			// Отправка фотографии
+      if (User2.photo) {
+          const photoId = User2.photo;
+          if (User2.caption){
+          	capMessage = `<b>${User2.caption}</b>`;
+          	await bot.sendPhoto(chatId, photoId, { caption: capMessage, parse_mode: "HTML" });
+          }  else (allUserIds.forEach(async (doc) => {
+						    const targetChatId = doc.TG_ID;
+						    await bot.sendPhoto(targetChatId, photoId, {caption: messageToSend, parse_mode: "HTML" });
+					   }));
       }
 
+
+
+
+      /*
       // Отправка видео
       if (video.file_id) {
           const videoId = video.file_id;
           await bot.sendVideo(chatId, videoId, { caption: 'Видео' });
       }
-
+			
       // Отправка аудио
       if (audio.file_id) {
           const audioId = audio.file_id;
@@ -1471,13 +1519,18 @@ const start = () => {
 
 		if (msg.data == "Отменить рассылку"){
 
+			
 			mediaInfo = [];
 			console.log("mediaInfo cancel sending", mediaInfo);
 			User.sendCombMessage = false;
-			await bot.sendMessage(chatId, `Администрирование
+			await bot.sendMessage(chatId, `стандартные методы телеграм прикрепить файлы, написать текст, прикрепить видео, записать аудио
 
 
-				`, AdmButProceed)
+
+				Зона для отображения выгружаемых файлов
+
+
+				`, SendingMessages)
 		}
 
 		if (msg.data == "Сделать фото"){
@@ -1694,16 +1747,11 @@ const start = () => {
 	});
 
 	process.on('SIGINT', async () => {
-	  try {
-	    if (db) {
-	      await db.client.close();
-	      console.log('MongoDB connection closed.');
-	    }
-	  } catch (error) {
-	    console.error('Error while closing MongoDB connection:', error);
-	  } finally {
-	    process.exit(0);
+	  if (dbUsers) {
+	    await dbUsers.client.close();
+	    console.log('MongoDB connection closed due to application termination');
 	  }
+	  process.exit(0);
 	});
 		
 		
