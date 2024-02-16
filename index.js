@@ -317,7 +317,7 @@ const SendingMessages  = {
 	reply_markup: JSON.stringify({
 		inline_keyboard: [
 			[{text : 'Начать рассылку', callback_data : 'Начать рассылку'}],
-			[{text : 'Отменить', callback_data : 'Администрирование'}],
+			[{text : 'Отменить', callback_data : 'Создать рассылку'}],
 			[{text : 'Назад', callback_data : 'Администрирование'}]
 		]
 	})
@@ -788,7 +788,7 @@ const start = () => {
 		
 	try {		
 		
-		let Reg = /\s/;
+		let Reg = /^\/start \d+$/;
 		mentor = msg.text.split(" ");
 		//console.log(msg.text)
 		//console.log("Mentor bot.on", mentor)		
@@ -796,11 +796,11 @@ const start = () => {
 		const text = msg.text;
 		const chatId = msg.chat.id;	
 
-		if (mentor.length == 2){
+		/*if (mentor.length == 2){
 
 			User = await writeGetUser(msg.chat, mentor[1]).catch(console.dir);
 		
-		} else User = await getUser(msg.chat).catch(console.dir);
+		} else User = await getUser(msg.chat).catch(console.dir);*/
 				
 		if (msg.chat.id == adminName) {
 
@@ -812,7 +812,7 @@ const start = () => {
 		if (Reg.test(msg.text) && admin == false){	
 
 			User.sendCombmessage = false;			
-			//User = await writeGetUser(msg.chat, mentor[1]).catch(console.dir);
+			User = await writeGetUser(msg.chat, mentor[1]).catch(console.dir);
 			//mentorI = mentor[1];
 
 			if (User.UserPass){User.systemLearn = 'Система обученияAllowed'} else User.systemLearn = 'Система обучения';
@@ -828,7 +828,7 @@ const start = () => {
 		} else if (Reg.test(msg.text) && admin == true) {
 			
 			User.sendCombmessage = false;			
-			//User = await writeGetUser(msg.chat, mentor[1]).catch(console.dir);							
+			User = await writeGetUser(msg.chat, mentor[1]).catch(console.dir);							
 
 			await bot.sendMessage(chatId, `<b>Поздравляем! 🎉\n\nВы оказались в лучшем месте, чтобы начать зарабатывать через интернет от 10.000$ / мес на экологичном продукте с командой профессионалов.\n\n✅ Жмите последовательно на кнопки в главном меню и уже через 15 минут у вас сложится понимание - как достичь ваших финансовых целей вместе с нами в 2024 году.\n\nto change language press: menu button -> /language</b>`, 
 				{parse_mode: "HTML", reply_markup: AdminButtons.reply_markup})
@@ -840,7 +840,7 @@ const start = () => {
 			//console.log("User sendCombMess non Addm", User.sendCombmessage)
 			User.sendCombmessage = false;
 			//console.log("start 2")
-			//User = await getUser(msg.chat).catch(console.dir);
+			User = await getUser(msg.chat).catch(console.dir);
 			//console.log("start 3")
 			//console.log("User /start admin false", User);
 
@@ -862,7 +862,7 @@ const start = () => {
 	  	//console.log("User sendCombMess Addm", User.sendCombmessage)
 	  	User.sendCombmessage = false;
 	  	//console.log("start 2")
-	  	//User = await getUser(msg.chat).catch(console.dir);
+	  	User = await getUser(msg.chat).catch(console.dir);
 	  	//console.log("start 3")
 			//console.log("User start adm true", User);
 			
@@ -1260,6 +1260,7 @@ const start = () => {
 
 		if (msg.data == "Администрирование"){
 
+			
 			User.sendCombMessage = false;
 
 			await bot.sendMessage(chatId, `Администрирование`, AdmButProceed)
@@ -1317,33 +1318,108 @@ const start = () => {
 
 			User.sendCombMessage = true;			
 				
-				bot.on('message', (msg) => {
+			let mediaInfo = [];
+			console.log("mediaInfo sending", mediaInfo);
 
-					if (User.sendCombMessage){
-						
-					  const chatId = msg.chat.id;
+			bot.on('message', async (msg) => {
 
-					  // Обработка текста
-					  const text = msg.text || '';
-					  //console.log("text inside Создать рассылку", text)
-					  if ( text.startsWith("/")){text = ''}
-					  // Обработка фотографий
-					  const photos = msg.photo || [];
-					  //console.log("Photos inside создать рассылку", photos)
-					  // Обработка видео
-					  const video = msg.video || {};
-					  //console.log("Video inside Создать рассылку", video)
-					  // Обработка аудио
-					  const audio = msg.audio || {};
-					  //console.log("Audio inside Создать рассылку", audio)
-					  // Скомпановать все в одно сообщение
-					  const combinedMessage = `Текст: ${text}\nФотографии: ${photos.length}\nВидео: ${video.file_id}\nАудио: ${audio.file_id}`;
+			    if (User.sendCombMessage) {
 
-					  // Отправить сообщение в общий чат
-					  bot.sendMessage(chatId, combinedMessage);
-				  }
+			        const chatId = msg.chat.id;
+			        console.log("Message mass sending", msg);
 
-			  });					
+			        // Обработка текста
+			        let text = msg.text || '';
+			        if (text.startsWith("/")) {
+			            text = '';
+			        }
+
+			        // Обработка фотографии (всегда будет одна)
+			        const photo = msg.photo ? msg.photo[msg.photo.length - 1] : null;
+
+			        // Обработка видео
+			        const video = msg.video || {};
+
+			        // Обработка аудио
+			        const audio = msg.audio || {};
+
+			        const voice = msg.voice || {};
+
+			        const video_note = msg.video_note || {};
+
+			        if (text) {
+							    // Если текст уже есть в массиве, заменяем его
+							    const textIndex = mediaInfo.findIndex(info => info.startsWith('Текст:'));
+							    if (textIndex !== -1) {
+							        mediaInfo[textIndex] = `Текст: ${text}`;
+							    } else {
+							        // Иначе добавляем новый текст
+							        mediaInfo.push(`Текст: ${text}`);
+							    }
+							    User2.text = text; // Перезаписываем значение при каждом новом тексте
+							}
+
+			        if (photo) {
+			            mediaInfo.push(`Фото: загружено`);
+			            User2.photo = photo.file_id; // Перезаписываем значение при каждой загрузке фотографии
+			        }
+
+			        if (video.file_id) {
+							    const videoIndex = mediaInfo.findIndex(info => info.startsWith('Видео:'));
+							    if (videoIndex !== -1) {
+							        mediaInfo[videoIndex] = `Видео: загружено`;
+							    } else {
+							        mediaInfo.push(`Видео: загружено`);
+							    }
+							    User2.video = video.file_id;
+							}
+
+							if (audio.file_id) {
+							    const audioIndex = mediaInfo.findIndex(info => info.startsWith('Аудио:'));
+							    if (audioIndex !== -1) {
+							        mediaInfo[audioIndex] = `Аудио: загружено`;
+							    } else {
+							        mediaInfo.push(`Аудио: загружено`);
+							    }
+							    User2.audio = audio.file_id;
+							}
+
+							if (voice.file_id) {
+							    const voiceIndex = mediaInfo.findIndex(info => info.startsWith('Voice:'));
+							    if (voiceIndex !== -1) {
+							        mediaInfo[voiceIndex] = `Voice загружен`;
+							    } else {
+							        mediaInfo.push(`Voice загружен`);
+							    }
+							    User2.voice = voice.file_id;
+							}
+
+							if (video_note.file_id) {
+							    const videoNoteIndex = mediaInfo.findIndex(info => info.startsWith('Video_note:'));
+							    if (videoNoteIndex !== -1) {
+							        mediaInfo[videoNoteIndex] = `Video_note загружен`;
+							    } else {
+							        mediaInfo.push(`Video_note загружен`);
+							    }
+							    User2.video_note = video_note.file_id;
+							}
+
+			        console.log("mediaInfo ", mediaInfo);
+			        // Скомпановать все в одно сообщение
+			        const combinedMessage = mediaInfo.join('\n');
+
+			        
+
+			            
+
+			            // Отправка текста
+			            await bot.sendMessage(chatId, `<b>Создано сообщение из ваших материалов:\n${combinedMessage}</b>`,
+			                { parse_mode: "HTML", reply_markup: SendingMessages.reply_markup }
+
+			            );
+			        
+			    }
+			});				
 
 			//console.log("UserSend after if", User.sendCombMessage);			
 
@@ -1359,6 +1435,36 @@ const start = () => {
 
 		if (msg.data == "Начать рассылку"){
 
+			/*/ Отправка фотографии
+      if (photo) {
+          const photoId = photo.file_id;
+          await bot.sendPhoto(chatId, photoId, { caption: 'Фото' });
+      }
+
+      // Отправка видео
+      if (video.file_id) {
+          const videoId = video.file_id;
+          await bot.sendVideo(chatId, videoId, { caption: 'Видео' });
+      }
+
+      // Отправка аудио
+      if (audio.file_id) {
+          const audioId = audio.file_id;
+          await bot.sendAudio(chatId, audioId, { caption: 'Аудио' });
+      }
+
+      // Отправка Voice
+      if (voice.file_id) {
+          const voiceId = voice.file_id;
+          await bot.sendVoice(chatId, voiceId, { caption: 'Voice' });
+      }
+
+      // Отправка видеосообщения
+      if (video_note.file_id) {
+          const videoNoteId = video_note.file_id;
+          await bot.sendVideoNote(chatId, videoNoteId);
+      }*/
+
 			User.sendCombMessage = false;
 			await bot.sendMessage(chatId, `Контент ушел в бота и виден всем !
 
@@ -1367,10 +1473,19 @@ const start = () => {
 				Всего отправлено: 203 сообщений`, BackToAdmin)
 		}
 
-		if (msg.data == "ОтменитьРассылку"){
+		if (msg.data == "Отменить рассылку"){
 
+			mediaInfo = [];
+			console.log("mediaInfo cancel sending", mediaInfo);
 			User.sendCombMessage = false;
-			await bot.sendMessage(chatId, `Администрирование`, AdmButProceed)
+			await bot.sendMessage(chatId, `стандартные методы телеграм прикрепить файлы, написать текст, прикрепить видео, записать аудио
+
+
+
+				Зона для отображения выгружаемых файлов
+
+
+				`, SendingMessages)
 		}
 
 		if (msg.data == "Сделать фото"){
@@ -1586,7 +1701,18 @@ const start = () => {
 					  		
 	});
 
-
+	process.on('SIGINT', async () => {
+	  try {
+	    if (db) {
+	      await db.client.close();
+	      console.log('MongoDB connection closed.');
+	    }
+	  } catch (error) {
+	    console.error('Error while closing MongoDB connection:', error);
+	  } finally {
+	    process.exit(0);
+	  }
+	});
 		
 		
 
