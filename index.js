@@ -886,7 +886,7 @@ const start = () => {
         
         if (msg.caption) {
         	const captionEnt = msg.caption_entities;
-        	console.log("captionEnt", captionEnt)
+        	//console.log("captionEnt", captionEnt)
         	const capp = `<b>Создано сообщение из ваших материалов:\n${combinedMessage}</b>`;
         	await bot.sendMessage(chatId, capp, {
         		parse_mode: "HTML",
@@ -1445,7 +1445,7 @@ const start = () => {
 			//bot.off("message");
 			bot.off('message', messageHandler);
 			
-			console.log("mediaInfo sending", mediaInfo);
+			//console.log("mediaInfo sending", mediaInfo);
 			delete User2.text;
 			delete User2.photo;
 			delete User2.video;
@@ -1469,18 +1469,51 @@ const start = () => {
 				`, SendingMessages)
 		}
 
-		if (msg.data == "Начать рассылку"){
 
+
+
+
+
+
+
+
+
+
+
+
+
+		if (msg.data == "Начать рассылку"){
+			await bot.sendMessage(chatId, `Загрузка...`)
 			await client.connect();
+
+			const filter = {TG_ID: chatId};
+			let get_user = await dbUsers.findOne(filter); 
+			//console.log("statistic get_user before", get_user);
+
+			const messageOverallCount = isNaN(get_user.messageOverallCount) ? 1 : get_user.messageOverallCount + 1;				
+
+			//console.log("Before mentorUpdate: get_mentor", get_mentor);
+			let statisticCount = await dbUsers.updateOne(
+
+				filter,
+					{$set: { "messageOverallCount": messageOverallCount }},
+						{ upsert: true}
+
+			)	
+			get_user = await dbUsers.findOne(filter);
+			//console.log("statistic get_user after", get_user);
+
+			
+			
 
 			const messageToSend = `<b>${User2.text}</b>`;
       const allUserIds = await dbUsers.find({}, { projection: { TG_ID: 1, _id: 0 } }).toArray();
-
-			await console.log("all Users Ids ", allUserIds);
+      //console.log("msg inside begin sending ", msg)
+			//await console.log("all Users Ids ", allUserIds);
 
 			
 
-			console.log("User2 Begin Sending", User2)
+			//console.log("User2 Begin Sending", User2)
 			// Отправка фотографии
       if (User2.photo) {
           const photoId = User2.photo;
@@ -1591,7 +1624,7 @@ const start = () => {
 
 
 					Рассылка успешно выполнена
-				Всего отправлено: 203 сообщений`, BackToAdmin)
+				Всего отправлено: ${get_user.messageOverallCount ? get_user.messageOverallCount : 0} сообщений`, BackToAdmin)
 		}
 
 		if (msg.data == "Отменить рассылку"){
@@ -1613,7 +1646,7 @@ const start = () => {
 		if (msg.data == "Сделать фото"){
 
 			User.photocheck = false;
-			console.log("сделать фото", User)
+			//console.log("сделать фото", User)
 			await bot.sendMessage(chatId, `фото
 
 
@@ -1762,7 +1795,7 @@ const start = () => {
 			if (msg.data == "ОтправитьСкрин"){
 
 				User.photocheck = false;
-				console.log("отправить скрин", User)
+				//console.log("отправить скрин", User)
 				await bot.sendMessage(chatId, `✅Скриншот отправлен на утверждение✅Как только модератор  проверит информацию. Вы получите уведомление`, MainMenu)
 				await bot.sendPhoto(adminName, User.photo, {caption: 'Подтвердите регистрацию пользователя'});
 				await bot.sendMessage(adminName, `Пользователь: @${User.UserName}`, ConfirmPhotoAprove )
