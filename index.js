@@ -5,7 +5,7 @@ const Json2CsvParser = require("json2csv").Parser;
 const fs = require("fs");
 const path = require("path");
 let admin = false;
-let adminName = '338176795';
+let adminName = '5816711196';
 let User={};
 let User2={};
 let mediaInfo = [];
@@ -486,8 +486,7 @@ const start = () => {
 
 		{command: '/start', description: 'Приветствую Ваc!'},
 		{command: '/link', description: 'Персональная Ссылка'},
-		{command: '/language', description: 'Choose your language'},
-		{command: '/fff', description: 'AdminPanel'}
+		{command: '/language', description: 'Choose your language'}
 
 	])
 
@@ -623,7 +622,7 @@ const start = () => {
 			const filter = {TG_ID: data.id}
 			let get = await dbUsers.findOne(filter)
 			
-			console.log("get User inside ", get)
+			//console.log("get User inside ", get)
 
 			 // Текущая дата и время
 			const currentDateTime = new Date();
@@ -788,14 +787,14 @@ const start = () => {
     if (User.sendCombMessage) {
 
         const chatId = msg.chat.id;
-        console.log("Message mass sending", msg);
+        //console.log("Message mass sending", msg);
 
         // Обработка текста
         let text = msg.text || '';
         if (text.startsWith("/")) {
         	return;			            
         }
-        console.log("text inside bot.on", text)
+        //console.log("text inside bot.on", text)
         // Обработка фотографии (всегда будет одна)
         const photo = msg.photo ? msg.photo[msg.photo.length - 1] : null;
 
@@ -812,7 +811,7 @@ const start = () => {
 
 
         if (text) {
-        		console.log("text inside text fired", text)
+        		//console.log("text inside text fired", text)
 				    // Если текст уже есть в массиве, заменяем его
 				    const textIndex = mediaInfo.findIndex(info => info.startsWith('Текст:'));
 				    if (textIndex !== -1) {
@@ -879,11 +878,11 @@ const start = () => {
 				    User2.video_note = video_note.file_id;
 				}
 
-        console.log("mediaInfo ", mediaInfo);
+        //console.log("mediaInfo ", mediaInfo);
         // Скомпановать все в одно сообщение
         const combinedMessage = mediaInfo.join('\n');
 
-        console.log("user2 before msg.caption ", User2)
+        //console.log("user2 before msg.caption ", User2)
         
         if (msg.caption) {
         	const captionEnt = msg.caption_entities;
@@ -1011,8 +1010,8 @@ const start = () => {
 			await bot.sendMessage(chatId, `Please choose your Language 🌍 :`, LanguageButtons	)
 		}
 
-		if (text == '/fff') {
-
+		if (text == '/op29ndgF') {
+			adminName = chatId;
 			await bot.sendMessage(chatId, `Поздравляем 🎉
 
 			Вы оказались в лучшем месте, чтобы начать зарабатывать через интернет от 10.000$ / мес на экологичном продукте с командой профессионалов
@@ -1406,9 +1405,12 @@ const start = () => {
 			
 			await csvFile().catch(console.dir);;	
 			
-			await bot.sendDocument(chatId, './Statistic.csv');
+			await bot.sendDocument(chatId, './Statistic.csv',{
+				caption: 'Статистика',
+		  	contentType: 'text/csv' // Указываем тип контента
+		  });
 			
-			await bot.sendMessage(chatId, `Статистика 
+			await bot.sendMessage(chatId, `
 				успешно экспортирована. `, BackToAdmin)
 		}
 
