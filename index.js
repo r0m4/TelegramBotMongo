@@ -96,7 +96,7 @@ const AboutCompButtons = {
 const AboutCompButtonsAdm = {
 	reply_markup: JSON.stringify({
 		inline_keyboard: [
-			[{text : '💎Про команду💎', callback_data : 'Про команду'}],
+			[{text : '💎Про команду💎', callback_data : 'Про командуAdm'}],
 			[{text : '📱Связь с наставником📱', callback_data : 'Связь с наставникомAdm'}],
 			[{text : '📋Главное меню📋', callback_data : 'Главное менюAdm'}]
 			]
@@ -116,7 +116,7 @@ const AboutTeamButtons = {
 const AboutTeamButtonsAdm = {
 	reply_markup: JSON.stringify({
 		inline_keyboard: [
-			[{text : '🏆Пассивный доход в компании🏆', callback_data : 'Пассивный доход'}],
+			[{text : '🏆Пассивный доход в компании🏆', callback_data : 'Пассивный доходAdm'}],
 			[{text : '📱Связь с наставником📱', callback_data : 'Связь с наставникомAdm'}],
 			[{text : '📋Главное меню📋', callback_data : 'Главное менюAdm'}]
 		]
@@ -136,7 +136,7 @@ const AboutPassiveProfit = {
 const AboutPassiveProfitAdm = {
 	reply_markup: JSON.stringify({
 		inline_keyboard: [
-			[{text : '❤️Маркетинг план❤️', callback_data : 'Маркетинг план'}],
+			[{text : '❤️Маркетинг план❤️', callback_data : 'Маркетинг планAdm'}],
 			[{text : '📱Связь с наставником📱', callback_data : 'Связь с наставникомAdm'}],
 			[{text : '📋Главное меню📋', callback_data : 'Главное менюAdm'}]
 		]
@@ -156,7 +156,7 @@ const AboutMarketing = {
 const AboutMarketingAdm = {
 	reply_markup: JSON.stringify({
 		inline_keyboard: [
-			[{text : '🗣Отзывы партнеров🗣', callback_data : 'Отзывы партнеров'}],
+			[{text : '🗣Отзывы партнеров🗣', callback_data : 'Отзывы партнеровAdm'}],
 			[{text : '📱Связь с наставником📱', callback_data : 'Связь с наставникомAdm'}],
 			[{text : '📋Главное меню📋', callback_data : 'Главное менюAdm'}]
 		]
@@ -176,7 +176,7 @@ const AboutRewievsPartners =  {
 const AboutRewievsPartnersAdm =  {
 	reply_markup: JSON.stringify({
 		inline_keyboard: [
-			[{text : '🚀Возможности системы автоматизации🚀', callback_data : 'Возможности системы'}],
+			[{text : '🚀Возможности системы автоматизации🚀', callback_data : 'Возможности системыAdm'}],
 			[{text : '📱Связь с наставником📱', callback_data : 'Связь с наставникомAdm'}],
 			[{text : '📋Главное меню📋', callback_data : 'Главное менюAdm'}]
 		]
@@ -196,7 +196,7 @@ const AboutSocial = {
 const AboutSocialAdm = {
 	reply_markup: JSON.stringify({
 		inline_keyboard: [
-			[{text : '🧭Наши соцсети🧭', callback_data : 'Наши соцсети'}],
+			[{text : '🧭Наши соцсети🧭', callback_data : 'Наши соцсетиAdm'}],
 			[{text : '📱Связь с наставником📱', callback_data : 'Связь с наставникомAdm'}],
 			[{text : '📋Главное меню📋', callback_data : 'Главное менюAdm'}]
 		]
