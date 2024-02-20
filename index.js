@@ -649,7 +649,17 @@ const start = () => {
 
 			// В переменной result теперь содержатся записи, удовлетворяющие условиям времени и имени наставника
 			//console.log("result", result.length);
-			User2.MonthlyFollowers = result.length;
+			//User2.MonthlyFollowers = result.length;
+
+			const MonthlyFollowers = await dbUsers.updateOne(
+
+				filter,
+					{$set: { "MonthlyFollowers": result.length }},
+						{ upsert: true}
+
+			)	
+
+			get = await dbUsers.findOne(filter)	
 
 			return get;
 
@@ -1322,7 +1332,8 @@ const start = () => {
 				Важно. Отправлять скриншот необходимо в ответ на это сообщение!  Не наставнику, не в общий чат, а прямо сюда.`, ConfirmAdm)
 		}
 		
-		if (msg.data == "Личный кабинет"){						
+		if (msg.data == "Личный кабинет"){	
+				User = await getUser(msg.chat).catch(console.dir);					
 				//console.log("User личный кабинет", User2)
 				await bot.sendMessage(chatId, `<b>Добро пожаловать в персональный кабинет бота.</b>
 
@@ -1334,7 +1345,7 @@ const start = () => {
 
 					Приглашено по Вашей реф. ссылке:
 					- всего ${User.Followers ? User.Followers : 0} чел
-					- за последние 30 дней: ${User2.MonthlyFollowers ? User2.MonthlyFollowers : 0} чел
+					- за последние 30 дней: ${User.MonthlyFollowers ? User.MonthlyFollowers : 0} чел
 
 
 					Из них прошли регистрацию: ${User.FollowerRegistered ? User.FollowerRegistered : 0} чел`, { 
@@ -1346,6 +1357,7 @@ const start = () => {
 			
 
 		if (msg.data == "Личный кабинетAdm"){
+			User = await getUser(msg.chat).catch(console.dir);
 			
 			await bot.sendMessage(chatId, `<b>Добро пожаловать в персональный кабинет бота.</b>
 
@@ -1357,7 +1369,7 @@ const start = () => {
 
 				Приглашено по Вашей реф. ссылке:
 				- всего ${User.Followers ? User.Followers : 0} чел
-				- за последние 30 дней: 0 чел
+				- за последние 30 дней: ${User.MonthlyFollowers ? User.MonthlyFollowers : 0} чел
 
 
 				Из них прошли регистрацию: ${User.FollowerRegistered ? User.FollowerRegistered : 0} чел`, { 
