@@ -618,11 +618,11 @@ const start = () => {
 		try {
 
 			await client.connect();				
-
-			const filter = {TG_ID: data.id}
+   			console.log("data inside getUser", data)
+	 		const filter = {TG_ID: data.id}
 			let get = await dbUsers.findOne(filter)
 			
-			//console.log("get User inside ", get)
+			console.log("get User inside ", get)
 
 			 // Текущая дата и время
 			const currentDateTime = new Date();
@@ -1309,8 +1309,8 @@ const start = () => {
 		}
 		
 		if (msg.data == "Личный кабинет"){	
-				User = await getUser(msg.chat).catch(console.dir);					
-				//console.log("User личный кабинет", User2)
+				User = await getUser(msg.from).catch(console.dir);					
+				//console.log("msg личный кабинет", User2)
 				await bot.sendMessage(chatId, `<b>Добро пожаловать в персональный кабинет бота.</b>
 
 					Вас пригласил: @${User.MentorName}
@@ -1333,7 +1333,7 @@ const start = () => {
 			
 
 		if (msg.data == "Личный кабинетAdm"){
-			User = await getUser(msg.chat).catch(console.dir);
+			User = await getUser(msg.from).catch(console.dir);
 			
 			await bot.sendMessage(chatId, `<b>Добро пожаловать в персональный кабинет бота.</b>
 
