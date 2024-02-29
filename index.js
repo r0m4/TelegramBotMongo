@@ -624,6 +624,8 @@ const start = () => {
 			
 			console.log("get User inside ", get)
 
+			if (get == null) {return null}
+
 			 // Текущая дата и время
 			const currentDateTime = new Date();
 
@@ -972,7 +974,11 @@ const start = () => {
 			//console.log("User sendCombMess non Addm", User.sendCombmessage)
 			User.sendCombmessage = false;
 			//console.log("start 2")
+
 			User = await getUser(msg.chat).catch(console.dir);
+
+			if (User == null) { await bot.sendMessage(chatId, `<b>Неправильное использование системы! пожалуйста зайдите в бота по ссылке типа : https://t.me/adlfjbaf_bot?start=338176795; а не по ссылке : @adlfjbaf_bot \n\nTo change language press: menu button -> /language</b>`, 
+				{parse_mode: "HTML"}) }
 			//console.log("start 3")
 			//console.log("User /start admin false", User);
 
@@ -995,6 +1001,9 @@ const start = () => {
 	  	User.sendCombmessage = false;
 	  	//console.log("start 2")
 	  	User = await getUser(msg.chat).catch(console.dir);
+
+	  	if (User == null) { await bot.sendMessage(chatId, `<b>Неправильное использование системы! пожалуйста зайдите в бота по ссылке типа : https://t.me/adlfjbaf_bot?start=338176795; а не по ссылке : @adlfjbaf_bot \n\nTo change language press: menu button -> /language</b>`, 
+				{parse_mode: "HTML"}) }
 	  	//console.log("start 3")
 			//console.log("User start adm true", User);
 			
