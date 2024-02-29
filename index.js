@@ -1,5 +1,5 @@
 const TelegramApi = require('node-telegram-bot-api');
-const token = '6405206204:AAGfinSAzpIlaifftIfPbqJLyayTbfPwsjc';
+const token = '7051185573:AAH3diL8EhId8qtzHM2VhB0BzvGWaVEC5fc';
 const bot = new TelegramApi(token, {polling:true});
 const Json2CsvParser = require("json2csv").Parser;
 const fs = require("fs");
@@ -925,7 +925,7 @@ const start = () => {
 		mentor = msg.text.split(" ");
 		//console.log(msg.text)
 		//console.log("Mentor bot.on", mentor)		
-		let botName = 'https://t.me/adlfjbaf_bot';		
+		let botName = 'https://t.me/Holding_UKG_bot';		
 		const text = msg.text;
 		const chatId = msg.chat.id;	
 
@@ -977,7 +977,7 @@ const start = () => {
 
 			User = await getUser(msg.chat).catch(console.dir);
 
-			if (User == null) { await bot.sendMessage(chatId, `<b>Неправильное использование системы! пожалуйста зайдите в бота по ссылке типа : https://t.me/adlfjbaf_bot?start=338176795; а не по ссылке : @adlfjbaf_bot \n\nTo change language press: menu button -> /language</b>`, 
+			if (User == null) { await bot.sendMessage(chatId, `<b>Неправильное использование системы! пожалуйста зайдите в бота по ссылке типа : https://t.me/Holding_UKG_bot?start=338176795; а не по ссылке : @Holding_UKG_bot \n\nTo change language press: menu button -> /language</b>`, 
 				{parse_mode: "HTML"}) }
 			//console.log("start 3")
 			//console.log("User /start admin false", User);
@@ -1002,7 +1002,7 @@ const start = () => {
 	  	//console.log("start 2")
 	  	User = await getUser(msg.chat).catch(console.dir);
 
-	  	if (User == null) { await bot.sendMessage(chatId, `<b>Неправильное использование системы! пожалуйста зайдите в бота по ссылке типа : https://t.me/adlfjbaf_bot?start=338176795; а не по ссылке : @adlfjbaf_bot \n\nTo change language press: menu button -> /language</b>`, 
+	  	if (User == null) { await bot.sendMessage(chatId, `<b>Неправильное использование системы! пожалуйста зайдите в бота по ссылке типа : https://t.me/Holding_UKG_bot?start=338176795; а не по ссылке : @Holding_UKG_bot \n\nTo change language press: menu button -> /language</b>`, 
 				{parse_mode: "HTML"}) }
 	  	//console.log("start 3")
 			//console.log("User start adm true", User);
