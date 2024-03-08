@@ -1832,7 +1832,7 @@ const start = () => {
 			if (msg.data == "ОтправитьСкрин"){
 
 				try {
-					const User = await userModel.getUser(msg.from).catch(console.dir);
+					const User = await getUser(msg.from).catch(console.dir);
 					User3.photocheck = false;
 					User3.TG_ID = User.TG_ID;
 					console.log("User3", User3);
@@ -1865,7 +1865,7 @@ const start = () => {
 			}
 
 			if (msg.data == "ПодтвердитьPhotoAprove"){
-				const User = await userModel.getUser(msg.from).catch(console.dir);
+				const User = await getUser(msg.from).catch(console.dir);
 				//console.log("User подтвердить PhotoApprove User3", User3)
 				await bot.sendMessage(User3.TG_ID, `Пройти к обучению`, buttonsController.Confirm);
 				await bot.sendMessage(chatId, `Одобрение успешно отправлено.`, buttonsController.MainMenuAdm)
@@ -1891,7 +1891,7 @@ const start = () => {
 				    console.log("чат айди :", chatId)
 					  const photo = msg.photo;
 					  const fileId = photo[photo.length - 1].file_id;
-					  await userModel.writeUserPhotoCheck(chatId, fileId);
+					  await writeUserPhotoCheck(chatId, fileId);
 					  //User.photo = fileId;
 
 					  //console.log("User is bot.on(photo):", User);
