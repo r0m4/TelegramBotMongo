@@ -494,7 +494,29 @@ const start = () => {
 	const dbUsers = client.db('UKGLearningBot').collection('Users');
 	//let mentorI;		
 
-	
+	async function writeUserPhotoCheck(data, fileId) {
+		try {
+
+			await client.connect();	
+			//console.log("data inside writeUserPhotoCheck", data);
+			const filter = {TG_ID: data};
+			let get = await dbUsers.findOne(filter)
+			//console.log("User writeUserPhotoCheck", get);
+
+			const result = await dbUsers.updateOne(
+
+			  filter,
+			    { $set: { "UserPassPhoto": fileId } },
+			  		{ upsert: true }
+			);
+			
+
+		} finally {
+
+			await client.close();
+
+		}
+	}
 	
 	async function writeGetUser(data, mentor){
 		
@@ -1809,13 +1831,20 @@ const start = () => {
 
 			if (msg.data == "ОтправитьСкрин"){
 
-				const User = await userModel.getUser(msg.from).catch(console.dir);
-				User3.photocheck = false;
-				//console.log("отправить скрин", User)
-				await bot.sendMessage(chatId, `✅Скриншот отправлен на утверждение✅Как только модератор  проверит информацию. Вы получите уведомление`, MainMenu)
-				await bot.sendPhoto(adminName, User.photo, {caption: 'Подтвердите регистрацию пользователя'});
-				await bot.sendMessage(adminName, `Пользователь: @${User.UserName}`, ConfirmPhotoAprove )
+				try {
+					const User = await userModel.getUser(msg.from).catch(console.dir);
+					User3.photocheck = false;
+					User3.TG_ID = User.TG_ID;
+					console.log("User3", User3);
+					//setUser(msg.chat, User.photocheck= false); 
+					console.log("отправить скрин", User)
+					await bot.sendMessage(chatId, `✅Скриншот отправлен на утверждение✅Как только модератор  проверит информацию. Вы получите уведомление`, buttonsController.MainMenu)
+					//console.log("отправить скрин", adminName, chatId)
 
+					await bot.sendPhoto(adminName, User.UserPassPhoto, {caption: 'Подтвердите регистрацию пользователя'});
+					//console.log("отправить скрин сюда дошел");
+					await bot.sendMessage(adminName, `Пользователь: @${User.UserName ? User.UserName : 'У пользователя не заполнена графа UserName'}`, buttonsController.ConfirmPhotoAprove )
+				}	catch (error){console.log(error)}
 			}
 
 			if (msg.data == "ОтменитьСкрин"){
@@ -1836,10 +1865,16 @@ const start = () => {
 			}
 
 			if (msg.data == "ПодтвердитьPhotoAprove"){
+				const User = await userModel.getUser(msg.from).catch(console.dir);
+				//console.log("User подтвердить PhotoApprove User3", User3)
+				await bot.sendMessage(User3.TG_ID, `Пройти к обучению`, buttonsController.Confirm);
+				await bot.sendMessage(chatId, `Одобрение успешно отправлено.`, buttonsController.MainMenuAdm)
 
-				await bot.sendMessage(User.TG_ID, `Пройти к обучению`, Confirm);
-				await bot.sendMessage(chatId, `Одобрение успешно отправлено.`, MainMenuAdm)
+			}
 
+			if (msg.data == "ОтменитьPhotoAprove"){
+				await bot.sendMessage(User3.TG_ID, `Извините в регистрации отказано администратором`, buttonsController.MainMenu);
+				await bot.sendMessage(chatId, `Отказ в регистрации успешно отправлен.`, buttonsController.MainMenuAdm)
 			}
 
 		} catch (error){return error;}
@@ -1849,16 +1884,18 @@ const start = () => {
 
 	  try{
 
+	  			//User = await getUser(msg)
 	  		 if (User3.photocheck){
 
 	  		 		const chatId = msg.chat.id;
-				    //console.log("чат айди :", chatId)
+				    console.log("чат айди :", chatId)
 					  const photo = msg.photo;
 					  const fileId = photo[photo.length - 1].file_id;
-					  User.photo = fileId;
+					  await userModel.writeUserPhotoCheck(chatId, fileId);
+					  //User.photo = fileId;
 
 					  //console.log("User is bot.on(photo):", User);
-					  await bot.sendMessage(chatId, `Вы уверены что хотите отправить этот скриншот ?`, AreYouShure);
+					  await bot.sendMessage(chatId, `Вы уверены что хотите отправить этот скриншот ?`, buttonsController.AreYouShure);
 					  
 					  //bot.sendPhoto(chatId, fileId, {caption: 'Вы прислали фото:'});
 					  // Ваши дальнейшие действия с изображением
