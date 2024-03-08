@@ -1838,12 +1838,12 @@ const start = () => {
 					console.log("User3", User3);
 					//setUser(msg.chat, User.photocheck= false); 
 					console.log("отправить скрин", User)
-					await bot.sendMessage(chatId, `✅Скриншот отправлен на утверждение✅Как только модератор  проверит информацию. Вы получите уведомление`, buttonsController.MainMenu)
+					await bot.sendMessage(chatId, `✅Скриншот отправлен на утверждение✅Как только модератор  проверит информацию. Вы получите уведомление`, MainMenu)
 					//console.log("отправить скрин", adminName, chatId)
 
 					await bot.sendPhoto(adminName, User.UserPassPhoto, {caption: 'Подтвердите регистрацию пользователя'});
 					//console.log("отправить скрин сюда дошел");
-					await bot.sendMessage(adminName, `Пользователь: @${User.UserName ? User.UserName : 'У пользователя не заполнена графа UserName'}`, buttonsController.ConfirmPhotoAprove )
+					await bot.sendMessage(adminName, `Пользователь: @${User.UserName ? User.UserName : 'У пользователя не заполнена графа UserName'}`, ConfirmPhotoAprove )
 				}	catch (error){console.log(error)}
 			}
 
@@ -1867,14 +1867,14 @@ const start = () => {
 			if (msg.data == "ПодтвердитьPhotoAprove"){
 				const User = await getUser(msg.from).catch(console.dir);
 				//console.log("User подтвердить PhotoApprove User3", User3)
-				await bot.sendMessage(User3.TG_ID, `Пройти к обучению`, buttonsController.Confirm);
-				await bot.sendMessage(chatId, `Одобрение успешно отправлено.`, buttonsController.MainMenuAdm)
+				await bot.sendMessage(User3.TG_ID, `Пройти к обучению`, Confirm);
+				await bot.sendMessage(chatId, `Одобрение успешно отправлено.`, MainMenuAdm)
 
 			}
 
 			if (msg.data == "ОтменитьPhotoAprove"){
-				await bot.sendMessage(User3.TG_ID, `Извините в регистрации отказано администратором`, buttonsController.MainMenu);
-				await bot.sendMessage(chatId, `Отказ в регистрации успешно отправлен.`, buttonsController.MainMenuAdm)
+				await bot.sendMessage(User3.TG_ID, `Извините в регистрации отказано администратором`, MainMenu);
+				await bot.sendMessage(chatId, `Отказ в регистрации успешно отправлен.`, MainMenuAdm)
 			}
 
 		} catch (error){return error;}
@@ -1895,7 +1895,7 @@ const start = () => {
 					  //User.photo = fileId;
 
 					  //console.log("User is bot.on(photo):", User);
-					  await bot.sendMessage(chatId, `Вы уверены что хотите отправить этот скриншот ?`, buttonsController.AreYouShure);
+					  await bot.sendMessage(chatId, `Вы уверены что хотите отправить этот скриншот ?`, AreYouShure);
 					  
 					  //bot.sendPhoto(chatId, fileId, {caption: 'Вы прислали фото:'});
 					  // Ваши дальнейшие действия с изображением
