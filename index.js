@@ -71,7 +71,7 @@ const AdminButtons = {
 			[{text : '👓Промо материалы👓', url : `https://t.me/promoUKG`}],
 			[{text : '💡Система обучения💡', callback_data : 'Система обученияAllowedAdm'}],
 			[{text : '💼Личный  кабинет💼', callback_data : 'Личный кабинетAdm'}],
-			[{text : '📰Перейти на сайт📰', callback_data : 'Перейти на сайт'}],
+			[{text : '📰Перейти на сайт📰', callback_data : 'Перейти на сайтAdm'}],
 			[{text : '🚓Администрирование🚔', callback_data : 'Администрирование'}]
 			
 			]
@@ -228,6 +228,8 @@ const AboutMentor = {
 		]
 	})
 };
+
+
 
 const AboutMentorAdm = {
 	reply_markup: JSON.stringify({
@@ -824,6 +826,59 @@ const start = () => {
 	  }
 	}
 
+	async function simplyGetUser(data){
+		try {
+			//console.log("data simGetUser", data)
+			await client.connect();	
+			const filter = {TG_ID: Number(data.id)}
+			//console.log("filter simplyGet", filter)
+			let get = await dbUsers.findOne(filter)
+			//console.log("User inside simplyGetUser", get);
+
+			if (get == null){return null};
+			return get;
+
+		} catch (error) {
+			  console.error('Error during simplyGet:', error);
+			}finally {
+
+			await client.close();
+
+		}
+	}
+
+	async function writeReferalLink(data, link){
+		try {
+
+			//console.log("link", link.indexOf('='))
+			let index = link.indexOf('=');
+
+			//console.log("letterRef", link.charAt(index + 1))
+			if (link.charAt(index+1) === '/') {
+				//console.log("WriteRefFired")
+
+	        	return null;			            
+	        }
+
+			await client.connect();
+			const filter = {TG_ID: data.id}
+			
+			const writeRef = await dbUsers.updateOne(
+
+				filter,
+					{$set: { "ReferalLink": link}},
+						{ upsert: true}
+
+			)
+			//console.log("writeRef inside writeRefLink", writeRef);
+			return link;
+
+		} finally {
+
+			await client.close();
+
+		}
+	}
 	async function messageHandler(msg) {
 
 
@@ -980,11 +1035,11 @@ const start = () => {
 			const User = await writeGetUser(msg.chat, mentor[1]).catch(console.dir);
 			//mentorI = mentor[1];
 
-			if (User.UserPass){User.systemLearn = 'Система обученияAllowed'} else User.systemLearn = 'Система обучения';
+			//if (User.UserPass){User.systemLearn = 'Система обученияAllowed'} else User.systemLearn = 'Система обучения';
 
 			let switcher;
 
-			if (User.systemLearn == 'Система обучения'){switcher = MainButtons} else switcher = MainButtonsProceed;			
+			if (User.UserPass){switcher = MainButtonsProceed} else switcher = MainButtons;		
 
 			await bot.sendMessage(chatId, `<b>Поздравляем! 🎉\n\nВы оказались в лучшем месте, чтобы начать зарабатывать через интернет от 1000$ / мес на экологичном продукте с командой профессионалов.\n\n✅ Жмите последовательно на кнопки в главном меню и уже через 15 минут у вас сложится понимание - как достичь ваших финансовых целей вместе с нами в 2024 году.\n\nto change language press: menu button -> /language</b>`, 
 				{parse_mode: "HTML", reply_markup: switcher.reply_markup})
@@ -1008,17 +1063,17 @@ const start = () => {
 
 			const User = await getUser(msg.chat).catch(console.dir);
 
-			if (User == null) { await bot.sendMessage(chatId, `<b>Неправильное использование системы! пожалуйста зайдите в бота по ссылке типа : https://t.me/Holding_UKG_bot?start=338176795; а не по ссылке : @Holding_UKG_bot \n\nTo change language press: menu button -> /language</b>`, 
+			if (User == null) { await bot.sendMessage(chatId, `<b>Неправильное использование системы! пожалуйста зайдите в бота по ссылке типа : https://t.me/Holding_UKG_bot?start=338176795; а не по ссылке : @Holding_UKG_bot`, 
 				{parse_mode: "HTML"}) }
 			//console.log("start 3")
 			//console.log("User /start admin false", User);
 
-			if (User.UserPass){User.systemLearn = 'Система обученияAllowed'} else User.systemLearn = 'Система обучения';
+			//if (User.UserPass){User.systemLearn = 'Система обученияAllowed'} else User.systemLearn = 'Система обучения';
 
 			//console.log("start 4")		
 			let switcher;
 
-			if (User.systemLearn == 'Система обучения'){switcher = MainButtons} else switcher = MainButtonsProceed;
+			if (User.UserPass){switcher = MainButtonsProceed} else switcher = MainButtons;
 
 			//console.log("start 5")
 			await bot.sendMessage(chatId, `<b>Поздравляем! 🎉\n\nВы оказались в лучшем месте, чтобы начать зарабатывать через интернет от 1000$ / мес на экологичном продукте с	командой профессионалов.\n\n✅ Жмите последовательно на кнопки в главном меню и уже через 15 минут у вас сложится понимание - как достичь ваших финансовых целей вместе с нами в 2024 году.\n\nTo change language press: menu button -> /language</b>`, 
@@ -1033,18 +1088,26 @@ const start = () => {
 	  	//console.log("start 2")
 	  	const User = await getUser(msg.chat).catch(console.dir);
 
-	  	if (User == null) { await bot.sendMessage(chatId, `<b>Неправильное использование системы! пожалуйста зайдите в бота по ссылке типа : https://t.me/Holding_UKG_bot?start=338176795; а не по ссылке : @Holding_UKG_bot \n\nTo change language press: menu button -> /language</b>`, 
+	  	if (User == null) { await bot.sendMessage(chatId, `<b>Неправильное использование системы! пожалуйста зайдите в бота по ссылке типа : https://t.me/Holding_UKG_bot?start=338176795; а не по ссылке : @Holding_UKG_bot `, 
 				{parse_mode: "HTML"}) }
 	  	//console.log("start 3")
 			//console.log("User start adm true", User);
+
+			//if (User.UserPass){User.systemLearn = 'Система обученияAllowed'} else User.systemLearn = 'Система обучения';
+
+			let switcher;
+
+			if (User.UserPass){switcher = MainButtonsProceed} else switcher = MainButtons;
 			
-			await bot.sendMessage(chatId, `<b>Поздравляем 🎉\n\nВы оказались в лучшем месте, чтобы начать зарабатывать через интернет от 1000$ / мес на экологичном продукте с командой профессионалов\n\n✅ Жмите последовательно на кнопки в главном меню и уже через 15 минут у Вас сложится понимание\n\n- как достичь Ваших финансовых целей вместе с нами в 2024 году.\n\nto change language press: menu button -> /language</b>`, {parse_mode: "HTML", reply_markup: AdminButtons.reply_markup})
+			await bot.sendMessage(chatId, `<b>Поздравляем 🎉\n\nВы оказались в лучшем месте, чтобы начать зарабатывать через интернет от 1000$ / мес на экологичном продукте с командой профессионалов\n\n✅ Жмите последовательно на кнопки в главном меню и уже через 15 минут у Вас сложится понимание\n\n- как достичь Ваших финансовых целей вместе с нами в 2024 году.\n\nto change language press: menu button -> /language</b>`, 
+				{parse_mode: "HTML", reply_markup: switcher.reply_markup})
 		
 		}
 	  
 	  //Link Nonadmin
 		if (text == '/link' && msg.chat.id != adminName) {
 
+			
 			await bot.sendMessage(chatId, `Чтобы подробнее узнать о UKG Holding - переходи по ссылке ниже 👇 
 
 					🔗 ${botName}?start=${chatId}`, AboutMentor )
@@ -1068,6 +1131,7 @@ const start = () => {
 				
 				
 				const text = msg.text;
+				//console.log('referal link change fired')
 				let totalLink = await writeReferalLink(msg.chat, `https://ukgholding.org/?user=${text}`)
 				//console.log('totalLink', totalLink)
 				if (!totalLink){
@@ -1084,6 +1148,7 @@ const start = () => {
 				
 				
 					const text = msg.text;
+					//console.log('referal link change fired')
 					let totalLink = await writeReferalLink(msg.chat, `https://ukgholding.org/?user=${text}`)
 					//console.log('totalLink', totalLink)
 					
@@ -1433,35 +1498,38 @@ const start = () => {
 		}
 
 		if (msg.data == "Перейти на сайт"){
-			
-			const User = await getUser(msg.from).catch(console.dir);
-			//console.log("User pereiti na site", User)
-			const mentor = User.MentorID;
-			//console.log("mentor", mentor)
-			msg.from.id = mentor;
-			//console.log("msg pereeiti  na sait", msg)
-			const mentorOne = await simplyGetUser(msg.from).catch(console.dir);
-			//console.log ('mentor one перейти на сайт', mentrOne);
-			
-			if (mentorOne == null){
-				await bot.sendMessage(chatId, `Ваша ссылка для регистрации в персональном кабинете на платформе\n\n
-						https://ukgholding.org/?user=Lombrozo`, MainMenu
-				)				
-			}
+			try {
+				//console.log('Pereitii na sait msg.from', msg.from)
+				const User = await getUser(msg.from).catch(console.dir);
+				//console.log("User pereiti na site", User)
+				const mentor = User.Mentor;
+				//console.log("mentor", mentor)
+				msg.from.id = mentor;
+				//console.log("msg pereeiti  na sait", msg)
+				const mentorOne = await simplyGetUser(msg.from).catch(console.dir);
+				//console.log ('mentor one перейти на сайт', mentorOne);
+				
+				if (mentorOne == null){
+					await bot.sendMessage(chatId, `Ваша ссылка для регистрации в персональном кабинете на платформе\n\n
+							https://ukgholding.org/?user=Lombrozo`, MainMenu
+					)				
+				} 
 
-			//console.log("перейти на сайт User", User);
-			await bot.sendMessage(chatId, `Ваша ссылка для регистрации в персональном кабинете на платформе\n\n
-			если Ваша сылка не работает это  значит что Ваш наставник допустил  ошибку в ее написании, обратитесь к наставнику \n\n
-			${mentorOne.ReferalLink ? mentorOne.ReferalLink : 'https://ukgholding.org/?user=Lombrozo'}`, MainMenu
-			)
+				//console.log("перейти на сайт User", User);
+				await bot.sendMessage(chatId, `Ваша ссылка для регистрации в персональном кабинете на платформе\n\n
+				если Ваша сылка не работает это  значит что Ваш наставник допустил  ошибку в ее написании, обратитесь к наставнику \n\n
+				${mentorOne.ReferalLink ? mentorOne.ReferalLink : 'https://ukgholding.org/?user=Lombrozo'}`, MainMenu
+				)
+			} catch (error){console.log(error)};
 		}
 
 		if (msg.data == "Перейти на сайтAdm"){
 			try {
+				//console.log('Pereitii na sait msg.from', msg.from)
 				const User = await getUser(msg.from).catch(console.dir);
 				//console.log("User pereiti na site", User)
-				const mentor = User.MentorID;
-				console.log("mentor", mentor)
+				const mentor = User.Mentor;
+				//console.log("mentor", mentor)
 				msg.from.id = mentor;
 				//console.log("msg pereeiti  na sait", msg)
 				const mentorOne = await simplyGetUser(msg.from).catch(console.dir);
@@ -1481,12 +1549,14 @@ const start = () => {
 
 		if (msg.data == "Главное меню"){
 
+			const User = await getUser(msg.from).catch(console.dir);
+
 			let switcher;
 
 			if (User3.photocheck){User3.photocheck = false};
 			//console.log("Главное меню user", User );
 
-			if (User.UserPass || User.systemLearn == 'Система обученияAllowed'){switcher = MainButtonsProceed} else switcher = MainButtons;
+			if (User.UserPass){switcher = MainButtonsProceed} else switcher = MainButtons;
 
 			//console.log("Useerr glavnoe menu", User.systemLearn)
 			//console.log("Главное меню", msg);
