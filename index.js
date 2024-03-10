@@ -24,8 +24,10 @@ const MainButtons = {
 			[{text : '🚀Возможности системы автоматизации🚀', callback_data : 'Возможности системы'}],
 			[{text : '🧭Наши соцсети🧭', callback_data : 'Наши соцсети'}],
 			[{text : '📱Связь с наставником📱', callback_data : 'Связь с наставником'}],
+			[{text : '👓Промо материалы👓', url : `https://t.me/promoUKG`}],
 			[{text : '💡Система обучения💡', callback_data : 'Система обучения'}],
-			[{text : '💼Личный кабинет💼', callback_data : 'Личный кабинет'}]
+			[{text : '💼Личный кабинет💼', callback_data : 'Личный кабинет'}],
+			[{text : '📰Перейти на сайт📰', callback_data : 'Перейти на сайт'}]
 			
 			]
 		
@@ -44,8 +46,10 @@ const MainButtonsProceed = {
 			[{text : '🚀Возможности системы автоматизации🚀', callback_data : 'Возможности системы'}],
 			[{text : '🧭Наши соцсети🧭', callback_data : 'Наши соцсети'}],
 			[{text : '📱Связь с наставником📱', callback_data : 'Связь с наставником'}],
+			[{text : '👓Промо материалы👓', url : `https://t.me/promoUKG`}],
 			[{text : '💡Система обучения💡', callback_data : 'Система обученияAllowed'}],
-			[{text : '💼Личный кабинет💼', callback_data : 'Личный кабинет'}]
+			[{text : '💼Личный кабинет💼', callback_data : 'Личный кабинет'}],
+			[{text : '📰Перейти на сайт📰', callback_data : 'Перейти на сайт'}]
 			
 			]
 		
@@ -64,8 +68,10 @@ const AdminButtons = {
 			[{text : '🚀Возможности системы автоматизации🚀', callback_data : 'Возможности системыAdm'}],
 			[{text : '🧭Наши соцсети🧭', callback_data : 'Наши соцсетиAdm'}],
 			[{text : '📱Связь с наставником📱', callback_data : 'Связь с наставникомAdm'}],
+			[{text : '👓Промо материалы👓', url : `https://t.me/promoUKG`}],
 			[{text : '💡Система обучения💡', callback_data : 'Система обученияAllowedAdm'}],
 			[{text : '💼Личный  кабинет💼', callback_data : 'Личный кабинетAdm'}],
+			[{text : '📰Перейти на сайт📰', callback_data : 'Перейти на сайт'}],
 			[{text : '🚓Администрирование🚔', callback_data : 'Администрирование'}]
 			
 			]
@@ -374,6 +380,7 @@ const LearningSystem = {
 			[{text : '🚀ТРЕНИНГ: СТАРТ НА МИЛЛИОН!🚀', callback_data : 'Тренинг старт на миллион'}],
 			[{text : '🔥АКАДЕМИЯ ПРОДАЖ🔥', callback_data : 'Академия продаж'}],
 			[{text : '📱Работа с соц сетями📱', callback_data : 'Работа с соцсетями'}],
+			[{text : '🔗Добавить реферальную ссылку с сайта🔗', callback_data : 'Добавить рефСсылку с сайта'}],
 			[{text : '↩️Вернуться в основной бот↩️', callback_data : 'Главное меню'}]			
 		]
 	})
@@ -385,6 +392,7 @@ const LearningSystemAdm = {
 			[{text : '🚀ТРЕНИНГ: СТАРТ НА МИЛЛИОН!🚀', callback_data : 'Тренинг старт на миллионAdm'}],
 			[{text : '🔥АКАДЕМИЯ ПРОДАЖ🔥', callback_data : 'Академия продажAdm'}],
 			[{text : '📱Работа с соц сетями📱', callback_data : 'Работа с соцсетямиAdm'}],
+			[{text : '🔗Добавить реферальную ссылку с сайта🔗', callback_data : 'Добавить рефСсылку с сайтаAdm'}],
 			[{text : '↩️Вернуться в основной бот↩️', callback_data : 'Главное менюAdm'}]			
 		]
 	})
@@ -641,11 +649,11 @@ const start = () => {
 		try {
 
 			await client.connect();				
-   			console.log("data inside getUser", data)
+   			//console.log("data inside getUser", data)
 	 		const filter = {TG_ID: data.id}
 			let get = await dbUsers.findOne(filter)
 			
-			console.log("get User inside ", get)
+			//console.log("get User inside ", get)
 
 			if (get == null) {return null}
 
@@ -1042,7 +1050,7 @@ const start = () => {
 					🔗 ${botName}?start=${chatId}`, AboutMentor )
 		
 		//Link Admin
-		} else if (text == '/link' && msg.chat.id != adminName) {
+		} else if (text == '/link' && msg.chat.id == adminName) {
 
 			await bot.sendMessage(chatId, `Чтобы подробнее узнать о UKG Holding - переходи по ссылке ниже 👇 
 
@@ -1053,7 +1061,40 @@ const start = () => {
 		if (text == '/language'){
 
 			await bot.sendMessage(chatId, `Please choose your Language 🌍 :`, LanguageButtons	)
-		}			
+		}	
+
+		//Site Personal Link changing non Admin
+			if(User3.textCheck && msg.chat.id != adminName){
+				
+				
+				const text = msg.text;
+				let totalLink = await writeReferalLink(msg.chat, `https://ukgholding.org/?user=${text}`)
+				//console.log('totalLink', totalLink)
+				if (!totalLink){
+					User3.textCheck == false;
+					
+				} else {//console.log('msg.text is', text)
+						await bot.sendMessage(chatId, `Ваша персональная ссылка : https://ukgholding.org/?user=${text} \n\nЕсли хотите изменить логин введите новый прямо здесь `, SocialMediaWork);
+					}
+				
+				
+			
+				//Site Personal Link changing Admin
+			}	else if(User3.textCheck && msg.chat.id == adminName){
+				
+				
+					const text = msg.text;
+					let totalLink = await writeReferalLink(msg.chat, `https://ukgholding.org/?user=${text}`)
+					//console.log('totalLink', totalLink)
+					
+					if (!totalLink){
+						User3.textCheck == false;
+						
+					} else {//console.log('msg.text is', text)
+							await bot.sendMessage(chatId, `Ваша персональная ссылка : https://ukgholding.org/?user=${text} \n\nЕсли хотите изменить логин введите новый прямо здесь `, SocialMediaWorkAdm);
+						}			
+
+				}		
 
 	} catch (error){ return error}	
 
@@ -1389,6 +1430,53 @@ const start = () => {
 				  parse_mode: "HTML", reply_markup: MainMenuAdm.reply_markup
 				}
 			)
+		}
+
+		if (msg.data == "Перейти на сайт"){
+			
+			const User = await getUser(msg.from).catch(console.dir);
+			//console.log("User pereiti na site", User)
+			const mentor = User.MentorID;
+			//console.log("mentor", mentor)
+			msg.from.id = mentor;
+			//console.log("msg pereeiti  na sait", msg)
+			const mentorOne = await simplyGetUser(msg.from).catch(console.dir);
+			//console.log ('mentor one перейти на сайт', mentrOne);
+			
+			if (mentorOne == null){
+				await bot.sendMessage(chatId, `Ваша ссылка для регистрации в персональном кабинете на платформе\n\n
+						https://ukgholding.org/?user=Lombrozo`, MainMenu
+				)				
+			}
+
+			//console.log("перейти на сайт User", User);
+			await bot.sendMessage(chatId, `Ваша ссылка для регистрации в персональном кабинете на платформе\n\n
+			если Ваша сылка не работает это  значит что Ваш наставник допустил  ошибку в ее написании, обратитесь к наставнику \n\n
+			${mentorOne.ReferalLink ? mentorOne.ReferalLink : 'https://ukgholding.org/?user=Lombrozo'}`, MainMenu
+			)
+		}
+
+		if (msg.data == "Перейти на сайтAdm"){
+			try {
+				const User = await getUser(msg.from).catch(console.dir);
+				//console.log("User pereiti na site", User)
+				const mentor = User.MentorID;
+				console.log("mentor", mentor)
+				msg.from.id = mentor;
+				//console.log("msg pereeiti  na sait", msg)
+				const mentorOne = await simplyGetUser(msg.from).catch(console.dir);
+				//console.log ('mentor one перейти на сайт', mentorOne);
+				if (mentorOne == null){
+					await bot.sendMessage(chatId, `Ваша ссылка для регистрации в персональном кабинете на платформе\n\n
+						https://ukgholding.org/?user=Lombrozo`, MainMenuAdm
+					)				
+				}
+				//console.log("перейти на сайт User", User);
+				await bot.sendMessage(chatId, `Ваша ссылка для регистрации в персональном кабинете на платформе\n\n
+				если Ваша сылка не работает это  значит что Ваш наставник допустил  ошибку в ее написании, обратитесь к наставнику \n\n
+				${mentorOne.ReferalLink ? mentorOne.ReferalLink : 'https://ukgholding.org/?user=Lombrozo'}`, MainMenuAdm
+				)
+			}  catch (error) {console.log(error)}
 		}
 
 		if (msg.data == "Главное меню"){
@@ -1829,15 +1917,32 @@ const start = () => {
 
 			}
 
+			if (msg.data == 'Добавить рефСсылку с сайта'){
+				const User = await getUser(msg.from).catch(console.dir);
+				//console.log("add referal User", User)
+				const link = User.ReferalLink;
+				User3.textCheck = true;
+				await bot.sendMessage(chatId, `Ваша персональная ссылка : ${User.ReferalLink ? User.ReferalLink : 'https://ukgholding.org/?user='}\n\nВведите пожалуйста Ваш Логин который Вы указывали в кабинете UkgHolding.org/cabinet`, SocialMediaWork)
+				
+			}
+
+			if (msg.data == 'Добавить рефСсылку с сайтаAdm'){
+				const User = await getUser(msg.from).catch(console.dir);
+				const link = User.ReferalLink;
+				User3.textCheck = true;
+				await bot.sendMessage(chatId, `Ваша персональная ссылка : ${User.ReferalLink ? User.ReferalLink : 'https://ukgholding.org/?user='}\n\nВведите пожалуйста Ваш Логин который Вы указывали в кабинете UkgHolding.org/cabinet`, SocialMediaWorkAdm)
+				
+			}
+
 			if (msg.data == "ОтправитьСкрин"){
 
 				try {
 					const User = await getUser(msg.from).catch(console.dir);
 					User3.photocheck = false;
 					User3.TG_ID = User.TG_ID;
-					console.log("User3", User3);
+					//console.log("User3", User3);
 					//setUser(msg.chat, User.photocheck= false); 
-					console.log("отправить скрин", User)
+					//console.log("отправить скрин", User)
 					await bot.sendMessage(chatId, `✅Скриншот отправлен на утверждение✅Как только модератор  проверит информацию. Вы получите уведомление`, MainMenu)
 					//console.log("отправить скрин", adminName, chatId)
 
@@ -1888,7 +1993,7 @@ const start = () => {
 	  		 if (User3.photocheck){
 
 	  		 		const chatId = msg.chat.id;
-				    console.log("чат айди :", chatId)
+				    //console.log("чат айди :", chatId)
 					  const photo = msg.photo;
 					  const fileId = photo[photo.length - 1].file_id;
 					  await writeUserPhotoCheck(chatId, fileId);
