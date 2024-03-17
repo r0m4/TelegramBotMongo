@@ -292,7 +292,7 @@ const LanguageButtons = {
 			[{text : '🇮🇹Italiano🇮🇹', callback_data : 'Italiano'}],
 			[{text : '🇭🇺Magyar🇭🇺', callback_data : 'Magyar'}],
 			[{text : '🇹🇷Turkce🇹🇷', callback_data : 'Turkce'}],
-			[{text : '🇺🇦Русский🇺🇦', callback_data : 'Русский'}]
+			[{text : '🇷🇺Русский🇷🇺', callback_data : 'Русский'}]
 		]
 	})
 };
@@ -404,7 +404,7 @@ const TraningStartMillion  = {
 		inline_keyboard: [
 			[{text : '🔥АКАДЕМИЯ ПРОДАЖ🔥', callback_data : 'Академия продаж'}],
 			[{text : '⬆️Главное меню⬆️', callback_data : 'Система обученияAllowed'}],
-			[{text : '↩️Венуться в основной бот↩️', callback_data : 'Главное меню'}]			
+			[{text : '↩️Вернуться в основной бот↩️', callback_data : 'Главное меню'}]			
 		]
 	})
 };
@@ -414,7 +414,7 @@ const TraningStartMillionAdm  = {
 		inline_keyboard: [
 			[{text : '🔥АКАДЕМИЯ ПРОДАЖ🔥', callback_data : 'Академия продажAdm'}],
 			[{text : '⬆️Главное меню⬆️', callback_data : 'Система обученияAllowedAdm'}],
-			[{text : '↩️Венуться в основной бот↩️', callback_data : 'Главное менюAdm'}]			
+			[{text : '↩️Вернуться в основной бот↩️', callback_data : 'Главное менюAdm'}]			
 		]
 	})
 };
@@ -424,7 +424,7 @@ const SalesAcademy  = {
 		inline_keyboard: [
 			[{text : '📱Работа с соц сетями📱', callback_data : 'Работа с соцсетями'}],
 			[{text : '⬆️Главное меню⬆️', callback_data : 'Система обученияAllowed'}],
-			[{text : '↩️Венуться в основной бот↩️', callback_data : 'Главное меню'}]			
+			[{text : '↩️Вернуться в основной бот↩️', callback_data : 'Главное меню'}]			
 		]
 	})
 };
@@ -434,7 +434,7 @@ const SalesAcademyAdm  = {
 		inline_keyboard: [
 			[{text : '📱Работа с соц сетями📱', callback_data : 'Работа с соцсетямиAdm'}],
 			[{text : '⬆️Главное меню⬆️', callback_data : 'Система обученияAllowedAdm'}],
-			[{text : '↩️Венуться в основной бот↩️', callback_data : 'Главное менюAdm'}]			
+			[{text : '↩️Вернуться в основной бот↩️', callback_data : 'Главное менюAdm'}]			
 		]
 	})
 };
@@ -443,7 +443,7 @@ const SocialMediaWork  = {
 	reply_markup: JSON.stringify({
 		inline_keyboard: [
 			[{text : '⬆️Главное меню⬆️', callback_data : 'Система обученияAllowed'}],
-			[{text : '↩️Венуться в основной бот↩️', callback_data : 'Главное меню'}]			
+			[{text : '↩️Вернуться в основной бот↩️', callback_data : 'Главное меню'}]			
 		]
 	})
 };
@@ -452,7 +452,7 @@ const SocialMediaWorkAdm  = {
 	reply_markup: JSON.stringify({
 		inline_keyboard: [
 			[{text : '⬆️Главное меню⬆️', callback_data : 'Система обученияAllowedAdm'}],
-			[{text : '↩️Венуться в основной бот↩️', callback_data : 'Главное менюAdm'}]			
+			[{text : '↩️Вернуться в основной бот↩️', callback_data : 'Главное менюAdm'}]			
 		]
 	})
 };
@@ -1060,6 +1060,7 @@ const start = () => {
 			//console.log("User sendCombMess non Addm", User.sendCombmessage)
 			User2.sendCombmessage = false;
 			//console.log("start 2")
+			if (User3.textCheck){User3.textCheck = false};
 
 			const User = await getUser(msg.chat).catch(console.dir);
 
@@ -1085,6 +1086,7 @@ const start = () => {
 	  	//console.log("start 1")
 	  	//console.log("User sendCombMess Addm", User.sendCombmessage)
 	  	User2.sendCombmessage = false;
+	  	if (User3.textCheck){User3.textCheck = false};
 	  	//console.log("start 2")
 	  	const User = await getUser(msg.chat).catch(console.dir);
 
@@ -1107,7 +1109,7 @@ const start = () => {
 	  //Link Nonadmin
 		if (text == '/link' && msg.chat.id != adminName) {
 
-			
+			if (User3.textCheck){User3.textCheck = false};
 			await bot.sendMessage(chatId, `Чтобы подробнее узнать о UKG Holding - переходи по ссылке ниже 👇 
 
 					🔗 ${botName}?start=${chatId}`, AboutMentor )
@@ -1115,6 +1117,7 @@ const start = () => {
 		//Link Admin
 		} else if (text == '/link' && msg.chat.id == adminName) {
 
+			if (User3.textCheck){User3.textCheck = false};
 			await bot.sendMessage(chatId, `Чтобы подробнее узнать о UKG Holding - переходи по ссылке ниже 👇 
 
 					🔗 ${botName}?start=${chatId}`, AboutMentorAdm )
@@ -1135,7 +1138,7 @@ const start = () => {
 				let totalLink = await writeReferalLink(msg.chat, `https://ukgholding.org/?user=${text}`)
 				//console.log('totalLink', totalLink)
 				if (!totalLink){
-					User3.textCheck == false;
+					User3.textCheck = false;
 					
 				} else {//console.log('msg.text is', text)
 						await bot.sendMessage(chatId, `Ваша персональная ссылка : https://ukgholding.org/?user=${text} \n\nЕсли хотите изменить логин введите новый прямо здесь `, SocialMediaWork);
@@ -1153,7 +1156,7 @@ const start = () => {
 					//console.log('totalLink', totalLink)
 					
 					if (!totalLink){
-						User3.textCheck == false;
+						User3.textCheck = false;
 						
 					} else {//console.log('msg.text is', text)
 							await bot.sendMessage(chatId, `Ваша персональная ссылка : https://ukgholding.org/?user=${text} \n\nЕсли хотите изменить логин введите новый прямо здесь `, SocialMediaWorkAdm);
@@ -1552,7 +1555,7 @@ const start = () => {
 			const User = await getUser(msg.from).catch(console.dir);
 
 			let switcher;
-
+			if (User3.textCheck){User3.textCheck = false};
 			if (User3.photocheck){User3.photocheck = false};
 			//console.log("Главное меню user", User );
 
@@ -1569,7 +1572,7 @@ const start = () => {
 		}
 
 		if (msg.data == "Главное менюAdm"){
-
+			if (User3.textCheck){User3.textCheck = false};
 			await bot.sendMessage(chatId, `<b>💡Здесь главное меню и отсюда я готов показать тебе все!</b>\n\n🔥Главное что надо понять - в твоих руках сейчас ультрасовременный продукт - который позволит тебе уже сегодня, начать делать деньги.`,{
  				parse_mode: "HTML", reply_markup: AdminButtons.reply_markup
  			});
@@ -1863,12 +1866,12 @@ const start = () => {
 		}
 
 		if (msg.data == "Система обученияAllowed"){
-
+			if (User3.textCheck){User3.textCheck = false};
 			await bot.sendMessage(chatId, `<b>🎓 Пройдите пошаговую систему обучения.\n\n✅ Получите знания которые помогут Вам построть большой международный бизнес с компанией UKG Holding и нашей професиональной командой!</b>`, {parse_mode : "HTML", reply_markup : LearningSystem.reply_markup})
 		}
 
 		if (msg.data == "Система обученияAllowedAdm"){
-
+			if (User3.textCheck){User3.textCheck = false};
 			await bot.sendMessage(chatId, `<b>🎓 Пройдите пошаговую систему обучения.\n\n✅ Получите знания которые помогут Вам построть большой международный бизнес с компанией UKG Holding и нашей професиональной командой!</b>`, {parse_mode : "HTML", reply_markup : LearningSystemAdm.reply_markup})
 		}
 
