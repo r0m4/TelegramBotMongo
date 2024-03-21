@@ -5,7 +5,7 @@ const Json2CsvParser = require("json2csv").Parser;
 const fs = require("fs");
 const path = require("path");
 let admin = false;
-let adminName = '5816711196';
+let adminName = '338176795';
 let User={};
 let User2={};
 let User3={};
@@ -1054,20 +1054,23 @@ const start = () => {
 			const User = await getUser(msg.chat).catch(console.dir);
 
 			if (User == null) { await bot.sendMessage(chatId, `<b>Неправильное использование системы! пожалуйста зайдите в бота по ссылке типа : https://t.me/Holding_UKG_bot?start=338176795; а не по ссылке : @Holding_UKG_bot; https://t.me/Holding_UKG_bot</b>`, 
-				{parse_mode: "HTML"}) }
+				{parse_mode: "HTML"}) 
+			} else {
+				let switcher;
+
+				if (User.UserPass){switcher = MainButtonsProceed} else switcher = MainButtons;
+
+				//console.log("start 5")
+				await bot.sendMessage(chatId, `<b>Поздравляем! 🎉\n\nВы оказались в лучшем месте, чтобы начать зарабатывать через интернет от 1000$ / мес на экологичном продукте с	командой профессионалов.\n\n✅ Жмите последовательно на кнопки в главном меню и уже через 15 минут у вас сложится понимание - как достичь ваших финансовых целей вместе с нами в 2024 году.\n\nTo change language press: menu button -> /language</b>`, 
+					{parse_mode: "HTML", reply_markup: switcher.reply_markup})
+			} 
 			//console.log("start 3")
 			//console.log("User /start admin false", User);
 
 			//if (User.UserPass){User.systemLearn = 'Система обученияAllowed'} else User.systemLearn = 'Система обучения';
 
 			//console.log("start 4")		
-			let switcher;
-
-			if (User.UserPass){switcher = MainButtonsProceed} else switcher = MainButtons;
-
-			//console.log("start 5")
-			await bot.sendMessage(chatId, `<b>Поздравляем! 🎉\n\nВы оказались в лучшем месте, чтобы начать зарабатывать через интернет от 1000$ / мес на экологичном продукте с	командой профессионалов.\n\n✅ Жмите последовательно на кнопки в главном меню и уже через 15 минут у вас сложится понимание - как достичь ваших финансовых целей вместе с нами в 2024 году.\n\nTo change language press: menu button -> /language</b>`, 
-				{parse_mode: "HTML", reply_markup: switcher.reply_markup})
+			
 		
 	  // /Start Admin
 	  } else if (text == '/start' && msg.chat.id == adminName) {
@@ -1088,10 +1091,10 @@ const start = () => {
 
 			let switcher;
 
-			if (User.UserPass){switcher = MainButtonsProceed} else switcher = MainButtons;
+			//if (User.UserPass){switcher = MainButtonsProceed} else switcher = MainButtons;
 			
 			await bot.sendMessage(chatId, `<b>Поздравляем 🎉\n\nВы оказались в лучшем месте, чтобы начать зарабатывать через интернет от 1000$ / мес на экологичном продукте с командой профессионалов\n\n✅ Жмите последовательно на кнопки в главном меню и уже через 15 минут у Вас сложится понимание\n\n- как достичь Ваших финансовых целей вместе с нами в 2024 году.\n\nto change language press: menu button -> /language</b>`, 
-				{parse_mode: "HTML", reply_markup: switcher.reply_markup})
+				{parse_mode: "HTML", reply_markup: AdminButtons.reply_markup})
 		
 		}
 	  
@@ -1101,12 +1104,16 @@ const start = () => {
 			const User = await getUser(msg.chat).catch(console.dir);
 
 	  	if (User == null) { await bot.sendMessage(chatId, `<b>Неправильное использование системы! пожалуйста зайдите в бота по ссылке типа : https://t.me/Holding_UKG_bot?start=338176795; а не по ссылке : @Holding_UKG_bot; https://t.me/Holding_UKG_bot </b>`, 
-				{parse_mode: "HTML"}) }
+				{parse_mode: "HTML"}) 
+	  	} else {
 
-			if (User3.textCheck){User3.textCheck = false};
-			await bot.sendMessage(chatId, `Чтобы подробнее узнать о UKG Holding - переходи по ссылке ниже 👇 
+		  		if (User3.textCheck){User3.textCheck = false};
+					await bot.sendMessage(chatId, `Чтобы подробнее узнать о UKG Holding - переходи по ссылке ниже 👇 
 
-					🔗 ${botName}?start=${chatId}`, AboutMentor )
+						🔗 ${botName}?start=${chatId}`, AboutMentor )
+	  	}
+
+			
 		
 		//Link Admin
 		} else if (text == '/link' && msg.chat.id == adminName) {
@@ -1123,9 +1130,12 @@ const start = () => {
 			const User = await getUser(msg.chat).catch(console.dir);
 
 	  	if (User == null) { await bot.sendMessage(chatId, `<b>Неправильное использование системы! пожалуйста зайдите в бота по ссылке типа : https://t.me/Holding_UKG_bot?start=338176795; а не по ссылке : @Holding_UKG_bot; https://t.me/Holding_UKG_bot </b>`, 
-				{parse_mode: "HTML"}) }
+				{parse_mode: "HTML"}) 
+	  	} else {
+	  		await bot.sendMessage(chatId, `Please choose your Language 🌍 :`, LanguageButtons	)
+	  	}
 
-			await bot.sendMessage(chatId, `Please choose your Language 🌍 :`, LanguageButtons	)
+			
 		}	
 
 		//Site Personal Link changing non Admin
