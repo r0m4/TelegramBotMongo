@@ -1015,18 +1015,7 @@ const start = () => {
 		const text = msg.text;
 		const chatId = msg.chat.id;	
 
-		/*if (mentor.length == 2){
-
-			User = await writeGetUser(msg.chat, mentor[1]).catch(console.dir);
 		
-		} else User = await getUser(msg.chat).catch(console.dir);*/
-				
-		/*if (msg.chat.id == adminName) {
-
-			
-			admin = true;
-		
-		}*/
 		
 		//Start via link nonAdmin
 		if (Reg.test(msg.text) && msg.chat.id != adminName){	
@@ -1064,7 +1053,7 @@ const start = () => {
 
 			const User = await getUser(msg.chat).catch(console.dir);
 
-			if (User == null) { await bot.sendMessage(chatId, `<b>Неправильное использование системы! пожалуйста зайдите в бота по ссылке типа : https://t.me/Holding_UKG_bot?start=338176795; а не по ссылке : @Holding_UKG_bot`, 
+			if (User == null) { await bot.sendMessage(chatId, `<b>Неправильное использование системы! пожалуйста зайдите в бота по ссылке типа : https://t.me/Holding_UKG_bot?start=338176795; а не по ссылке : @Holding_UKG_bot; https://t.me/Holding_UKG_bot</b>`, 
 				{parse_mode: "HTML"}) }
 			//console.log("start 3")
 			//console.log("User /start admin false", User);
@@ -1090,7 +1079,7 @@ const start = () => {
 	  	//console.log("start 2")
 	  	const User = await getUser(msg.chat).catch(console.dir);
 
-	  	if (User == null) { await bot.sendMessage(chatId, `<b>Неправильное использование системы! пожалуйста зайдите в бота по ссылке типа : https://t.me/Holding_UKG_bot?start=338176795; а не по ссылке : @Holding_UKG_bot `, 
+	  	if (User == null) { await bot.sendMessage(chatId, `<b>Неправильное использование системы! пожалуйста зайдите в бота по ссылке типа : https://t.me/Holding_UKG_bot?start=338176795; а не по ссылке : @Holding_UKG_bot; https://t.me/Holding_UKG_bot </b>`, 
 				{parse_mode: "HTML"}) }
 	  	//console.log("start 3")
 			//console.log("User start adm true", User);
@@ -1109,6 +1098,11 @@ const start = () => {
 	  //Link Nonadmin
 		if (text == '/link' && msg.chat.id != adminName) {
 
+			const User = await getUser(msg.chat).catch(console.dir);
+
+	  	if (User == null) { await bot.sendMessage(chatId, `<b>Неправильное использование системы! пожалуйста зайдите в бота по ссылке типа : https://t.me/Holding_UKG_bot?start=338176795; а не по ссылке : @Holding_UKG_bot; https://t.me/Holding_UKG_bot </b>`, 
+				{parse_mode: "HTML"}) }
+
 			if (User3.textCheck){User3.textCheck = false};
 			await bot.sendMessage(chatId, `Чтобы подробнее узнать о UKG Holding - переходи по ссылке ниже 👇 
 
@@ -1125,6 +1119,11 @@ const start = () => {
 
 		//Language NonAdmin
 		if (text == '/language'){
+
+			const User = await getUser(msg.chat).catch(console.dir);
+
+	  	if (User == null) { await bot.sendMessage(chatId, `<b>Неправильное использование системы! пожалуйста зайдите в бота по ссылке типа : https://t.me/Holding_UKG_bot?start=338176795; а не по ссылке : @Holding_UKG_bot; https://t.me/Holding_UKG_bot </b>`, 
+				{parse_mode: "HTML"}) }
 
 			await bot.sendMessage(chatId, `Please choose your Language 🌍 :`, LanguageButtons	)
 		}	
