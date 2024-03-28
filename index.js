@@ -1692,148 +1692,152 @@ const start = () => {
 
 
 		if (msg.data == "Начать рассылку"){
-			await bot.sendMessage(chatId, `Загрузка...`)
-			await client.connect();
-
-			const filter = {TG_ID: chatId};
-			let get_user = await dbUsers.findOne(filter); 
-			//console.log("statistic get_user before", get_user);
-
-			const messageOverallCount = isNaN(get_user.messageOverallCount) ? 1 : get_user.messageOverallCount + 1;				
-
-			//console.log("Before mentorUpdate: get_mentor", get_mentor);
-			let statisticCount = await dbUsers.updateOne(
-
-				filter,
-					{$set: { "messageOverallCount": messageOverallCount }},
-						{ upsert: true}
-
-			)	
-			get_user = await dbUsers.findOne(filter);
-			//console.log("statistic get_user after", get_user);
-
 			
-			
+			try {
 
-			const messageToSend = `<b>${User2.text}</b>`;
-      const allUserIds = await dbUsers.find({}, { projection: { TG_ID: 1, _id: 0 } }).toArray();
-      //console.log("msg inside begin sending ", msg)
-			//await console.log("all Users Ids ", allUserIds);
+					await bot.sendMessage(chatId, `Загрузка...`)
+					await client.connect();
 
-			
+					const filter = {TG_ID: chatId};
+					let get_user = await dbUsers.findOne(filter); 
+					//console.log("statistic get_user before", get_user);
 
-			//console.log("User2 Begin Sending", User2)
-			// Отправка фотографии
-      if (User2.photo) {
-          const photoId = User2.photo;
-          if (User2.caption) {
-          	capMessage = `<b>${User2.caption}</b>`;
+					const messageOverallCount = isNaN(get_user.messageOverallCount) ? 1 : get_user.messageOverallCount + 1;				
 
-          	allUserIds.forEach(async (doc) => {
-						    const targetChatId = doc.TG_ID;
-						    await bot.sendPhoto(targetChatId, photoId, {caption: capMessage, parse_mode: "HTML" });
-					   })
+					//console.log("Before mentorUpdate: get_mentor", get_mentor);
+					let statisticCount = await dbUsers.updateOne(
 
-          	//await bot.sendPhoto(chatId, photoId, { caption: capMessage, parse_mode: "HTML" });
-          }  else (allUserIds.forEach(async (doc) => {
-						    const targetChatId = doc.TG_ID;
-						    await bot.sendPhoto(targetChatId, photoId, {caption: messageToSend, parse_mode: "HTML" });
-					   }));
-      }
+						filter,
+							{$set: { "messageOverallCount": messageOverallCount }},
+								{ upsert: true}
 
-      // Отправка видео
-      if (User2.video) {
-          const videoId = User2.video;
-          if (User2.caption) {
-          	capMessage = `<b>${User2.caption}</b>`;
+					)	
+					get_user = await dbUsers.findOne(filter);
+					//console.log("statistic get_user after", get_user);
 
-          	allUserIds.forEach(async  (doc) => {
-          		const targetChatId = doc.TG_ID;
-          		await bot.sendVideo(targetChatId, videoId, {caption: capMessage, parse_mode: "HTML" });
-          	})
+					
+					
 
-          } else (allUserIds.forEach(async  (doc) => {
-          		const targetChatId = doc.TG_ID;
-          		await bot.sendVideo(targetChatId, videoId, {caption: messageToSend, parse_mode: "HTML" });
-          	}))
-          //await bot.sendVideo(chatId, videoId, { caption: 'Видео' });
-      }
+					const messageToSend = `<b>${User2.text}</b>`;
+		      const allUserIds = await dbUsers.find({}, { projection: { TG_ID: 1, _id: 0 } }).toArray();
+		      //console.log("msg inside begin sending ", msg)
+					//await console.log("all Users Ids ", allUserIds);
 
-      // Отправка аудио
-      if (User2.audio) {
-          const audioId = User2.audio;
-          if (User2.caption) {
-          	capMessage = `<b>${User2.caption}</b>`;
+					
 
-          	allUserIds.forEach(async  (doc) => {
-          		const targetChatId = doc.TG_ID;
-          		await bot.sendAudio(targetChatId, audioId, {caption: capMessage, parse_mode: "HTML" });
-          	}) 
-          } else (allUserIds.forEach(async  (doc) => {
-	          		const targetChatId = doc.TG_ID;
-	          		await bot.sendAudio(targetChatId, audioId, {caption: `${messageToSend ? messageToSend : 'Audio'}`, parse_mode: "HTML" });
-	          	})
-          	)
-          
-          //await bot.sendAudio(chatId, audioId, { caption: 'Аудио' });
-      }
+					//console.log("User2 Begin Sending", User2)
+					// Отправка фотографии
+		      if (User2.photo) {
+		          const photoId = User2.photo;
+		          if (User2.caption) {
+		          	capMessage = `<b>${User2.caption}</b>`;
 
-      // Отправка Voice
-      if (User2.voice) {
-          const voiceId = User2.voice;
-          if (User2.caption) {
-          	capMessage = `<b>${User2.caption}</b>`;
+		          	allUserIds.forEach(async (doc) => {
+								    const targetChatId = doc.TG_ID;
+								    await bot.sendPhoto(targetChatId, photoId, {caption: capMessage, parse_mode: "HTML" });
+							   })
 
-          	allUserIds.forEach(async  (doc) => {
-          		const targetChatId = doc.TG_ID;
-          		await bot.sendVoice(targetChatId, voiceId, {caption: capMessage, parse_mode: "HTML" });
-          	}) 
-          } else (allUserIds.forEach(async  (doc) => {
-	          		const targetChatId = doc.TG_ID;
-	          		await bot.sendVoice(targetChatId, voiceId, {caption: `${messageToSend ? messageToSend : 'Voice'}`, parse_mode: "HTML" });
-	          	})
-          	)
-          
-          //await bot.sendAudio(chatId, audioId, { caption: 'Аудио' });
-      }
+		          	//await bot.sendPhoto(chatId, photoId, { caption: capMessage, parse_mode: "HTML" });
+		          }  else (allUserIds.forEach(async (doc) => {
+								    const targetChatId = doc.TG_ID;
+								    await bot.sendPhoto(targetChatId, photoId, {caption: messageToSend, parse_mode: "HTML" });
+							   }));
+		      }
 
-      // Отправка кружочков
-      if (User2.video_note) {
-          const video_noteId = User2.video_note;
-          if (User2.caption) {
-          	capMessage = `<b>${User2.caption}</b>`;
+		      // Отправка видео
+		      if (User2.video) {
+		          const videoId = User2.video;
+		          if (User2.caption) {
+		          	capMessage = `<b>${User2.caption}</b>`;
 
-          	allUserIds.forEach(async  (doc) => {
-          		const targetChatId = doc.TG_ID;
-          		await bot.sendVideoNote(targetChatId, video_noteId, {caption: capMessage, parse_mode: "HTML" });
-          	}) 
-          } else (allUserIds.forEach(async  (doc) => {
-	          		const targetChatId = doc.TG_ID;
-	          		await bot.sendVideoNote(targetChatId, video_noteId, {caption: `${messageToSend ? messageToSend : 'Video_note'}`, parse_mode: "HTML" });
-	          	})
-          	)
-          
-          //await bot.sendAudio(chatId, audioId, { caption: 'Аудио' });
-      }
+		          	allUserIds.forEach(async  (doc) => {
+		          		const targetChatId = doc.TG_ID;
+		          		await bot.sendVideo(targetChatId, videoId, {caption: capMessage, parse_mode: "HTML" });
+		          	})
 
-      if (!User2.video && !User2.photo && !User2.audio && !User2.voice && !User2.video_note && User2.text) {
-          const textId = `<b>${User2.text}</b>`;
+		          } else (allUserIds.forEach(async  (doc) => {
+		          		const targetChatId = doc.TG_ID;
+		          		await bot.sendVideo(targetChatId, videoId, {caption: messageToSend, parse_mode: "HTML" });
+		          	}))
+		          //await bot.sendVideo(chatId, videoId, { caption: 'Видео' });
+		      }
 
-          allUserIds.forEach(async (doc) => {
-						    const targetChatId = doc.TG_ID;
-						    await bot.sendMessage(targetChatId, textId, {parse_mode: "HTML" });
-					   });
-      }
+		      // Отправка аудио
+		      if (User2.audio) {
+		          const audioId = User2.audio;
+		          if (User2.caption) {
+		          	capMessage = `<b>${User2.caption}</b>`;
 
-      
+		          	allUserIds.forEach(async  (doc) => {
+		          		const targetChatId = doc.TG_ID;
+		          		await bot.sendAudio(targetChatId, audioId, {caption: capMessage, parse_mode: "HTML" });
+		          	}) 
+		          } else (allUserIds.forEach(async  (doc) => {
+			          		const targetChatId = doc.TG_ID;
+			          		await bot.sendAudio(targetChatId, audioId, {caption: `${messageToSend ? messageToSend : 'Audio'}`, parse_mode: "HTML" });
+			          	})
+		          	)
+		          
+		          //await bot.sendAudio(chatId, audioId, { caption: 'Аудио' });
+		      }
 
-			User2.sendCombMessage = false;
-			await client.close();
-			await bot.sendMessage(chatId, `Контент ушел в бота и виден всем !
+		      // Отправка Voice
+		      if (User2.voice) {
+		          const voiceId = User2.voice;
+		          if (User2.caption) {
+		          	capMessage = `<b>${User2.caption}</b>`;
+
+		          	allUserIds.forEach(async  (doc) => {
+		          		const targetChatId = doc.TG_ID;
+		          		await bot.sendVoice(targetChatId, voiceId, {caption: capMessage, parse_mode: "HTML" });
+		          	}) 
+		          } else (allUserIds.forEach(async  (doc) => {
+			          		const targetChatId = doc.TG_ID;
+			          		await bot.sendVoice(targetChatId, voiceId, {caption: `${messageToSend ? messageToSend : 'Voice'}`, parse_mode: "HTML" });
+			          	})
+		          	)
+		          
+		          //await bot.sendAudio(chatId, audioId, { caption: 'Аудио' });
+		      }
+
+		      // Отправка кружочков
+		      if (User2.video_note) {
+		          const video_noteId = User2.video_note;
+		          if (User2.caption) {
+		          	capMessage = `<b>${User2.caption}</b>`;
+
+		          	allUserIds.forEach(async  (doc) => {
+		          		const targetChatId = doc.TG_ID;
+		          		await bot.sendVideoNote(targetChatId, video_noteId, {caption: capMessage, parse_mode: "HTML" });
+		          	}) 
+		          } else (allUserIds.forEach(async  (doc) => {
+			          		const targetChatId = doc.TG_ID;
+			          		await bot.sendVideoNote(targetChatId, video_noteId, {caption: `${messageToSend ? messageToSend : 'Video_note'}`, parse_mode: "HTML" });
+			          	})
+		          	)
+		          
+		          //await bot.sendAudio(chatId, audioId, { caption: 'Аудио' });
+		      }
+
+		      if (!User2.video && !User2.photo && !User2.audio && !User2.voice && !User2.video_note && User2.text) {
+		          const textId = `<b>${User2.text}</b>`;
+
+		          allUserIds.forEach(async (doc) => {
+								    const targetChatId = doc.TG_ID;
+								    await bot.sendMessage(targetChatId, textId, {parse_mode: "HTML" });
+							   });
+		      }
+
+		      
+
+					User2.sendCombMessage = false;
+					await client.close();
+					await bot.sendMessage(chatId, `Контент ушел в бота и виден всем !
 
 
-					Рассылка успешно выполнена
-				Всего отправлено: ${get_user.messageOverallCount ? get_user.messageOverallCount : 0} сообщений`, BackToAdmin)
+							Рассылка успешно выполнена
+						Всего отправлено: ${get_user.messageOverallCount ? get_user.messageOverallCount : 0} сообщений`, BackToAdmin)
+			} catch (error){ console.log(error)};
 		}
 
 		if (msg.data == "Отменить рассылку"){
