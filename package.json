@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon index.js",
-    "start": "node index.js",
+    "dev": "nodemon --exitcrash --log  './logs/nodemon.log' index.js",
+    "start": "nodemon --exitcrash index.js",
     "devInter": "nodemon indexIntermedia.js",
     "devLearning": "nodemon indexLearning.js"
   },

@@ -568,7 +568,9 @@ const start = () => {
 
 			}			
 
-			get_user = await dbUsers.findOne(filter); 			
+			get_user = await dbUsers.findOne(filter);
+
+			//if(get_user == null){return null};
 
 			if (get_user.UserName != get_mentor.UserName ){
 
