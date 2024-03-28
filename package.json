@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon --exitcrash --log  './logs/nodemon.log' index.js",
+    "dev": "nodemon --exitcrash index.js",
     "start": "nodemon --exitcrash index.js"
   },
   "keywords": [],
